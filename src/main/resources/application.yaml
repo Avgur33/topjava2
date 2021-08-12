@@ -33,11 +33,16 @@ spring:
   cache:
     cache-names: users
     caffeine.spec: maximumSize=1,expireAfterAccess=60s
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
 
 logging:
   level:
     root: WARN
     ru.javaops.topjava2: DEBUG
+    org.springframework.security.web.FilterChainProxy: DEBUG
     org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
 
 server.servlet:
