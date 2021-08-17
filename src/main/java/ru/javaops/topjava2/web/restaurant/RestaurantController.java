@@ -7,16 +7,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
+import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.repository.RestaurantRepository;
+import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.to.RestaurantTo;
+import ru.javaops.topjava2.web.AuthUser;
 import ru.javaops.topjava2.web.Views;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 import static ru.javaops.topjava2.util.RestaurantUtil.getTos;
@@ -29,6 +34,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @AllArgsConstructor
 public class RestaurantController {
     private final RestaurantRepository repository;
+    private final VoteRepository voteRepository;
     public final static String REST_URL = "/api/restaurants";
 
     @JsonView(Views.Public.class)
@@ -71,6 +77,7 @@ public class RestaurantController {
         assureIdConsistent(rest, id);
         repository.save(rest);
     }
+
     @Operation(
             summary = "get all restaurants",
             description = "get restaurants with count votes per current day"

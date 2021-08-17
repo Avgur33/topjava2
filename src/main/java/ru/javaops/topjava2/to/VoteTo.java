@@ -26,4 +26,10 @@ public class VoteTo  extends BaseTo implements HasId {
     @Size(min = 2, max = 100)
     String restaurantName;
 
+    public VoteTo(Integer id, LocalDate regDate, String userName, String restaurantName) {
+        super(id);
+        this.regDate = regDate;
+        this.userName = userName;
+        this.restaurantName = restaurantName;
+    }
 }

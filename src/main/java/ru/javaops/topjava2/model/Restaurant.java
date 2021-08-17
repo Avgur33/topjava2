@@ -15,7 +15,7 @@ import java.util.List;
         {@UniqueConstraint(columnNames = {"name", "location"}, name = "rest_unique_name_location_idx")})
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 
 public class Restaurant extends NamedEntity {
 
@@ -31,13 +31,16 @@ public class Restaurant extends NamedEntity {
 
     //@JsonView(Views.Inner.class)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")//, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @OrderBy("price DESC")
+    //@OrderBy("price DESC")
     @JsonManagedReference
     @JsonView(Views.Inner.class)
     private List<Dish> dishes;
 
     public Restaurant(Integer id, String name) {
         super(id, name);
+    }
+    public Restaurant(Integer id ) {
+        super(id, null);
     }
 
 }

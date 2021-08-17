@@ -1,7 +1,9 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -15,6 +17,7 @@ import java.time.LocalDate;
         {@UniqueConstraint(columnNames = {"reg_date", "user_id"}, name = "vote_unique_reg_date_user_id_idx")})
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 
 public class Vote extends BaseEntity {
 
@@ -33,4 +36,11 @@ public class Vote extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     private Restaurant restaurant;
+
+    public Vote(Integer id, LocalDate regDate, User user, Restaurant restaurant) {
+        super(id);
+        this.regDate = regDate;
+        this.user = user;
+        this.restaurant = restaurant;
+    }
 }
