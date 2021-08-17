@@ -1,0 +1,8 @@
+package ru.javaops.topjava2.web;
+
+public class Views {
+    public static class Public {
+    }
+    public static class Inner {
+    }
+}

@@ -1,9 +1,11 @@
 package ru.javaops.topjava2.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.javaops.topjava2.web.Views;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -20,6 +22,7 @@ public abstract class NamedEntity extends BaseEntity {
     @NotBlank
     @Size(min = 2, max = 100)
     @Column(name = "name", nullable = false)
+    @JsonView(Views.Public.class)
     protected String name;
 
     protected NamedEntity(Integer id, String name) {
