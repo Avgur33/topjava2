@@ -16,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
+import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.web.Views;
 
@@ -25,7 +26,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
-import static ru.javaops.topjava2.util.DishUtil.getTos;
+import static ru.javaops.topjava2.util.DishUtil.*;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
@@ -35,6 +36,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @AllArgsConstructor
 public class DishController {
     private final DishRepository repository;
+    private final RestaurantRepository restaurantRepository;
     public final static String REST_URL = "/api/restaurants/{restaurantId}/dishes";
 
     @Operation(
@@ -43,16 +45,16 @@ public class DishController {
     )
     @GetMapping(value = "/history")
     public List<DishTo> getHistory(
-        @PathVariable @NotNull Integer restaurantId,
-        @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-        @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate){
-        return getTos(repository.getHistory(restaurantId, startDate!=null?startDate:LocalDate.of(2000,1,1),endDate!=null?endDate:LocalDate.of(3000,1,1)));
+            @PathVariable @NotNull Integer restaurantId,
+            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return getTos(repository.getHistory(restaurantId, startDate != null ? startDate : DATE_MIN, endDate != null ? endDate : DATE_MAX));
     }
 
 
     @Operation(
             summary = "delete by id",
-            description =""
+            description = ""
     )
     @Transactional
     @DeleteMapping("/{id}")
@@ -83,11 +85,12 @@ public class DishController {
     @JsonView(Views.Public.class)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Dish> creatWithLocation(@PathVariable int restaurantId, @Valid @RequestBody Dish dish ) {
+    public ResponseEntity<Dish> creatWithLocation(@PathVariable int restaurantId, @Valid @RequestBody Dish dish) {
         //ToDo админ не может создать еду после 11 часов на текущую дату
         log.info("create {}", dish);
         checkNew(dish);
-        dish.setRestaurant(new Restaurant(restaurantId));
+        dish.setForDate(LocalDate.now());
+        dish.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow());
         Dish created = repository.save(dish);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")

@@ -38,7 +38,7 @@ public class Vote extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonBackReference
+    @JsonBackReference(value = "restaurant-vote")
     private Restaurant restaurant;
 
     public Vote(Integer id, LocalDate regDate, User user, Restaurant restaurant) {

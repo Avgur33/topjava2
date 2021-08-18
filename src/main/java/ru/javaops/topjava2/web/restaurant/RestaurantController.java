@@ -17,6 +17,7 @@ import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.web.Views;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -64,10 +65,11 @@ public class RestaurantController {
             summary = "создаем ресторан",
             description = ""
     )
-    @JsonView(Views.Public.class)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Restaurant> creatWithLocation(@Valid @RequestBody Restaurant rest) {
+    @JsonView(Views.Public.class)
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Restaurant> creatWithLocation(@RequestBody @Valid Restaurant rest) {
         log.info("create {}", rest);
         checkNew(rest);
         Restaurant created = repository.save(rest);
@@ -81,11 +83,11 @@ public class RestaurantController {
             summary = "обновляем ресторан",
             description = ""
     )
-    @JsonView(Views.Public.class)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @JsonView(Views.Public.class)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void update(@Valid @RequestBody Restaurant rest, @PathVariable int id) {
+    public void update(@RequestBody @Valid Restaurant rest, @PathVariable int id) {
         log.info("update {} with id={}", rest, id);
         assureIdConsistent(rest, id);
         repository.save(rest);
