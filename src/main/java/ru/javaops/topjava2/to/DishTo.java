@@ -23,18 +23,10 @@ public class DishTo extends NamedTo implements HasId {
     @NotNull
     LocalDate forDate;
 
-    @NotNull
-    Integer   restaurantId;
 
-    @NotBlank
-    @Size(min = 2, max = 100)
-    String    restaurantName;
-
-    public DishTo(Integer id, String name, Integer price, LocalDate forDate, Integer restaurantId, String restaurantName) {
+    public DishTo(Integer id, String name, Integer price, LocalDate forDate) {
         super(id, name);
         this.price = price;
         this.forDate = forDate;
-        this.restaurantId = restaurantId;
-        this.restaurantName = restaurantName;
     }
 }

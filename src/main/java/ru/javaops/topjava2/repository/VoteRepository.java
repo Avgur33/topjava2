@@ -18,7 +18,12 @@ public interface VoteRepository extends BaseRepository<Vote>{
     @Query("SELECT v FROM Vote v ORDER BY v.id ASC")
     List<Vote> getAllWithUserAndRestaurant();
 
+    @Query("SELECT v FROM Vote v WHERE v.user.id=:userId AND v.regDate=current_date ")
+    Optional<Vote> getTodayUserVote(@Param("userId") int userId);
+
     @EntityGraph(attributePaths = {"user","restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT v FROM Vote v WHERE v.id=:id ORDER BY v.id ASC")
     Vote getByIdWithUserAndRestaurant(Integer id);
+
+
 }

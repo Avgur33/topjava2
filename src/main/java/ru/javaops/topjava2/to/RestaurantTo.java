@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 public class RestaurantTo extends NamedTo implements HasId {
 
     @NotBlank
-    @Size(max = 100)
+    @Size(min = 5,max = 100)
     String location;
 
     @NotNull

@@ -7,22 +7,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.javaops.topjava2.model.Dish;
+import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Restaurant;
-import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.to.RestaurantTo;
-import ru.javaops.topjava2.web.AuthUser;
 import ru.javaops.topjava2.web.Views;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static ru.javaops.topjava2.util.RestaurantUtil.getTos;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
@@ -34,22 +32,27 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @AllArgsConstructor
 public class RestaurantController {
     private final RestaurantRepository repository;
-    private final VoteRepository voteRepository;
     public final static String REST_URL = "/api/restaurants";
 
+    @Operation(
+            summary = "получить ресторан по айдишнику",
+            description = "получаем только ресторан"
+    )
     @JsonView(Views.Public.class)
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> get(@PathVariable int id) {
         log.info("get {}", id);
-        return ResponseEntity.of(repository.findById(id));
+        Optional<Restaurant> restaurant = repository.findById(id);
+        if (restaurant.isEmpty()) {
+            throw new NotFoundException("Not found entity with " + id);
+        }
+        return ResponseEntity.of(restaurant);
     }
 
-    @GetMapping("/{id}/dishes")
-    public List<Dish> getDishes(@PathVariable int id) {
-        log.info("get dishes for restaurant {}", id);
-        return repository.getByIdWithDishes(id).orElseThrow().getDishes();
-    }
-
+    @Operation(
+            summary = "удалить ресторан по айдишнику"
+    )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
@@ -57,7 +60,12 @@ public class RestaurantController {
         repository.deleteExisted(id);
     }
 
+    @Operation(
+            summary = "создаем ресторан",
+            description = ""
+    )
     @JsonView(Views.Public.class)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Restaurant> creatWithLocation(@Valid @RequestBody Restaurant rest) {
         log.info("create {}", rest);
@@ -69,9 +77,14 @@ public class RestaurantController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+    @Operation(
+            summary = "обновляем ресторан",
+            description = ""
+    )
     @JsonView(Views.Public.class)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void update(@Valid @RequestBody Restaurant rest, @PathVariable int id) {
         log.info("update {} with id={}", rest, id);
         assureIdConsistent(rest, id);
@@ -79,8 +92,8 @@ public class RestaurantController {
     }
 
     @Operation(
-            summary = "get all restaurants",
-            description = "get restaurants with count votes per current day"
+            summary = "получаем рестораны у которых есть еда с количеством голосов за текущий день",
+            description = ""
     )
     @GetMapping
     public List<RestaurantTo> getAll() {
