@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.javaops.topjava2.error.AppException;
 
@@ -29,6 +31,14 @@ import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.M
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String EXCEPTION_DUPLICATE_EMAIL = "User with this email already exists";
+    public static final String EXCEPTION_DUPLICATE_VOTE = "exception.vote.duplicate";
+    private static final String EXCEPTION_DUPLICATE_RESTAURANT = "exception.restaurant.duplicate";
+    private static final String EXCEPTION_DUPLICATE_DISH = "exception.dish.duplicate";
+
+    private static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
+            "vote_unique_reg_date_user_id_idx", EXCEPTION_DUPLICATE_VOTE,
+            "restaurant_unique_name_location_idx", EXCEPTION_DUPLICATE_RESTAURANT,
+            "dish_unique_name_date_restaurant_idx", EXCEPTION_DUPLICATE_DISH);
 
     private final ErrorAttributes errorAttributes;
 
@@ -58,6 +68,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("EntityNotFoundException ", ex);
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<?> typeMismatchException(WebRequest request, MethodArgumentTypeMismatchException ex) {
+        log.error("IllegalArgumentException ", ex);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.defaults(), "incorrect data format " + ex.getName()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> conflictException(WebRequest request, DataIntegrityViolationException ex) {
+        log.error("DataIntegrityViolationException ", ex);
+        String rootMsg = ex.getMessage();
+        if (rootMsg != null) {
+            String lowerCaseMsg = rootMsg.toLowerCase();
+            for (Map.Entry<String, String> entry : CONSTRAINS_I18N_MAP.entrySet()) {
+                if (lowerCaseMsg.contains(entry.getKey())) {
+                    return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.defaults(), entry.getValue()), HttpStatus.UNPROCESSABLE_ENTITY);
+                }
+            }
+        }
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
 
     private ResponseEntity<Object> handleBindingErrors(BindingResult result, WebRequest request) {
         String msg = result.getFieldErrors().stream()

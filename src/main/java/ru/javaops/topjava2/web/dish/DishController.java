@@ -13,20 +13,22 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Dish;
-import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.web.Views;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
-import static ru.javaops.topjava2.util.DishUtil.*;
+import static ru.javaops.topjava2.util.DateUtil.endDateUtil;
+import static ru.javaops.topjava2.util.DateUtil.startDateUtil;
+import static ru.javaops.topjava2.util.DishUtil.getTos;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
@@ -45,10 +47,10 @@ public class DishController {
     )
     @GetMapping(value = "/history")
     public List<DishTo> getHistory(
-            @PathVariable @NotNull Integer restaurantId,
+            @PathVariable Integer restaurantId,
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return getTos(repository.getHistory(restaurantId, startDate != null ? startDate : DATE_MIN, endDate != null ? endDate : DATE_MAX));
+        return getTos(repository.getHistory(restaurantId, startDateUtil(startDate) , endDateUtil(endDate)));
     }
 
 
@@ -56,13 +58,11 @@ public class DishController {
             summary = "delete by id",
             description = ""
     )
-    @Transactional
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void delete(@PathVariable int id) {
+    public void delete(@PathVariable @Min(1) int id) {
         log.info("Restaurant delete {}", id);
-        //ToDo админ не может удалить еду после 11 часов
         repository.deleteExisted(id);
     }
 
@@ -81,20 +81,19 @@ public class DishController {
             summary = "создаем еду для ресторана, нужно подумать про текущую дату",
             description = ""
     )
-    @Transactional
     @JsonView(Views.Public.class)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Dish> creatWithLocation(@PathVariable int restaurantId, @Valid @RequestBody Dish dish) {
-        //ToDo админ не может создать еду после 11 часов на текущую дату
         log.info("create {}", dish);
         checkNew(dish);
         dish.setForDate(LocalDate.now());
-        dish.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow());
+        dish.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow(() ->
+                new NotFoundException("Entity with id=" + restaurantId + " not found")));
         Dish created = repository.save(dish);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
+                .buildAndExpand(restaurantId, created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
@@ -108,10 +107,12 @@ public class DishController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void update(@Valid @RequestBody Dish dish, @PathVariable int id) {
+    public void update(@PathVariable int restaurantId, @PathVariable int id, @Valid @RequestBody Dish dish) {
         log.info("update {} with id={}", dish, id);
-        //ToDo админ не может обновить еду после 11 часов на дату старые даты
         assureIdConsistent(dish, id);
-        repository.save(dish);
+        Dish updated = repository.getById(id);
+        assureIdConsistent(updated.getRestaurant(), restaurantId);
+        updated.setName(dish.getName());
+        updated.setPrice(dish.getPrice());
     }
 }

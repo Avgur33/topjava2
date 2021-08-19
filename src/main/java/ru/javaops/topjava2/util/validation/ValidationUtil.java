@@ -3,7 +3,11 @@ package ru.javaops.topjava2.util.validation;
 import lombok.experimental.UtilityClass;
 import ru.javaops.topjava2.HasId;
 import ru.javaops.topjava2.error.IllegalRequestDataException;
+import ru.javaops.topjava2.error.LateTimeException;
 import ru.javaops.topjava2.error.NotFoundException;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @UtilityClass
 public class ValidationUtil {
@@ -28,4 +32,38 @@ public class ValidationUtil {
             throw new NotFoundException("Entity with id=" + id + " not found");
         }
     }
+
+    public static void checkCurrentTime(){
+        if (LocalTime.now().isAfter(LocalTime.of(11,0))) {
+            throw new LateTimeException("Voting ended at 11 o'clock");
+        }
+    }
+    public static void checkCurrentDate(LocalDate ld){
+        if (LocalDate.now().compareTo(ld) !=0 ) {
+            throw new LateTimeException("Vote can only be changed for today");
+        }
+    }
+
+    public static <T> T checkNotFoundWithId(T object, int id) {
+        checkNotFoundWithId(object != null, id);
+        return object;
+    }
+
+    public static void checkNotFoundWithId(boolean found, int id) {
+        checkNotFound(found, "id=" + id);
+    }
+
+    public static <T> T checkNotFound(T object, String msg) {
+        checkNotFound(object != null, msg);
+        return object;
+    }
+
+    public static void checkNotFound(boolean found, String msg) {
+        if (!found) {
+            throw new NotFoundException("Not found entity with " + msg);
+        }
+    }
+
+
+
 }

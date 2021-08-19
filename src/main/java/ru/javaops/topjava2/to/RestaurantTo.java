@@ -26,7 +26,7 @@ public class RestaurantTo extends NamedTo implements HasId {
     @Range(min = 0, max = Integer.MAX_VALUE)
     Integer votes;
 
-    @JsonIgnore
+    @NotNull
     Map<LocalDate, Long> votesHistory;
 
     public RestaurantTo(Integer id, String name, String location, Integer votes) {

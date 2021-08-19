@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.User;
 import ru.javaops.topjava2.repository.UserRepository;
 import ru.javaops.topjava2.util.UserUtil;
@@ -26,7 +27,7 @@ public abstract class AbstractUserController {
 
     public ResponseEntity<User> get(int id) {
         log.info("get {}", id);
-        return ResponseEntity.of(repository.findById(id));
+        return ResponseEntity.ok(repository.findById(id).orElseThrow(()->new NotFoundException("Entity with id=" + id + " not found")));
     }
 
     @CacheEvict(value = "users", allEntries = true)

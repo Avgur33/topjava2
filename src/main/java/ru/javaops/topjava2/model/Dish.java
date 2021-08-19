@@ -2,10 +2,7 @@ package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
@@ -16,11 +13,12 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Table(name="dish", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "for_date"}, name = "dish_unique_name_for_date_idx")})
+@Table(name="dish", uniqueConstraints = {@UniqueConstraint(
+        columnNames = {"name", "for_date", "restaurant_id"}, name = "dish_unique_name_date_restaurant_idx")})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-
+@ToString(callSuper = true)
 public class Dish extends NamedEntity {
 
     @JsonView(Views.Public.class)
@@ -31,7 +29,7 @@ public class Dish extends NamedEntity {
 
     @JsonView(Views.Inner.class)
     @Column(name = "for_date", nullable = false, columnDefinition = "date default now()")
-    @NotNull
+    //@NotNull
     private LocalDate forDate;
 
     @JsonView(Views.Inner.class)

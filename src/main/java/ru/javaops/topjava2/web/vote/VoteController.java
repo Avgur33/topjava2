@@ -5,22 +5,21 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import ru.javaops.topjava2.model.Restaurant;
+import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Vote;
+import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.to.VoteTo;
-import ru.javaops.topjava2.web.AuthUser;
 import ru.javaops.topjava2.web.SecurityUtil;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 import static ru.javaops.topjava2.util.VoteUtil.getTos;
+import static ru.javaops.topjava2.util.validation.ValidationUtil.*;
 
 
 @RestController
@@ -29,8 +28,8 @@ import static ru.javaops.topjava2.util.VoteUtil.getTos;
 @AllArgsConstructor
 public class VoteController {
 
-    public final static String REST_URL = "/api/restaurants/{restaurantId}/votes";
-    private static final LocalTime EXPIRED_TIME = LocalTime.of(11, 0);
+    public final static String REST_URL = "/api/votes";
+    private final RestaurantRepository restaurantRepository;
     private final VoteRepository repository;
 
     @Operation(
@@ -39,9 +38,9 @@ public class VoteController {
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable int restaurantId, @PathVariable int id) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void delete(@PathVariable int id) {
         log.info("Vote delete {}", id);
-        //ToDo вставить проверку на принадлежность ресторану, посмотреть наобщий метод delete
         repository.deleteExisted(id);
     }
 
@@ -50,61 +49,37 @@ public class VoteController {
             description = "register vote in system if time before 11:00"
     )
     @PostMapping(value = "")
-    public void create(@RequestParam @NotNull Integer restaurantId) {
+    public void create(@RequestBody Integer restaurantId) {
         log.info("create vote for restaurant {}", restaurantId);
-        //ToDo обработать ошибку запроса на создание
-        /*
-        if (LocalTime.now().isBefore(EXPIRED_TIME)){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-        */
-        ;
-        Optional<Vote> voteOptional = repository.getTodayUserVote(SecurityUtil.safeGet().getUser().getId());
-        if (voteOptional.isPresent()) {
-            voteOptional.get().setRestaurant(new Restaurant(restaurantId));
-            repository.save(voteOptional.get());
-        } else {
-            repository.save(new Vote(null, LocalDate.now(), SecurityUtil.safeGet().getUser(), new Restaurant(restaurantId)));
-        }
-
-        /*URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);*/
+        checkCurrentTime();
+        Vote newVote = new Vote(
+                null,
+                LocalDate.now(),
+                SecurityUtil.safeGet().getUser(),
+                restaurantRepository
+                        .findById(restaurantId)
+                        .orElseThrow(() ->new NotFoundException("Entity Restaurant with id=" + restaurantId + " not found")));
+        repository.save(newVote);
     }
 
     @Operation(
-            summary = "register vote in system",
-            description = "register vote in system if time before 11:00"
+            summary = "update vote in system",
+            description = "update vote in system if time before 11:00"
     )
-    @PutMapping(value = "")
-    public void update(@RequestParam @NotNull Integer restaurantId) {
-        log.info("update vote for restaurant {}", restaurantId);
-        //ToDo обработать ошибку запроса на создание
 
-        Optional<Vote> voteOptional = repository.getTodayUserVote(SecurityUtil.safeGet().getUser().getId());
-        if (voteOptional.isPresent()) {
-            voteOptional.get().setRestaurant(new Restaurant(restaurantId));
-            repository.save(voteOptional.get());
-        } else {
-            repository.save(new Vote(null, LocalDate.now(), SecurityUtil.safeGet().getUser(), new Restaurant(restaurantId)));
-        }
-
-    }
-
-    /*@GetMapping(value = "/{id}")
-    public ResponseEntity<VoteTo> get(@PathVariable @NotNull @Min(1) Integer id, @AuthenticationPrincipal AuthUser authUser) {
-        log.info("get vote {}", id);
-        return ResponseEntity.ok(createTo(repository.getByIdWithUserAndRestaurant(id)));
-    }*/
-
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable Integer id, @RequestParam Integer restaurant_id, @AuthenticationPrincipal AuthUser authUser) {
-        log.info("update with id={}", id);
-        //ToDo проверка на валидность юзера, голос принадлежит именно этому юзеру
-        Vote updated = repository.getById(id);
-        updated.setRestaurant(new Restaurant(restaurant_id));
+    @Transactional
+    public void update(@RequestParam Integer restaurantId, @PathVariable Integer id) {
+        log.info("update vote for restaurant {}", restaurantId);
+        //checkCurrentTime();
+        Vote vote = repository.getById(id);
+        checkCurrentDate(vote.getRegDate());
+        //ToDo добавить метод для проверки валидности юзера с нормальным выводом сообщения об ошибке
+        assureIdConsistent(vote.getUser(),SecurityUtil.safeGet().getUser().getId());
+        vote.setRestaurant(restaurantRepository
+                .findById(restaurantId)
+                .orElseThrow(() ->new NotFoundException("Entity Restaurant with id=" + restaurantId + " not found")));
     }
 
     @Operation(

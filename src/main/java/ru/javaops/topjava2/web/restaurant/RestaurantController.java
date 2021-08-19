@@ -4,26 +4,30 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
-import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.web.Views;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
+import static ru.javaops.topjava2.util.DateUtil.endDateUtil;
+import static ru.javaops.topjava2.util.DateUtil.startDateUtil;
 import static ru.javaops.topjava2.util.RestaurantUtil.getTos;
+import static ru.javaops.topjava2.util.RestaurantUtil.getTosHistory;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
@@ -43,11 +47,8 @@ public class RestaurantController {
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> get(@PathVariable int id) {
         log.info("get {}", id);
-        Optional<Restaurant> restaurant = repository.findById(id);
-        if (restaurant.isEmpty()) {
-            throw new NotFoundException("Not found entity with " + id);
-        }
-        return ResponseEntity.of(restaurant);
+        return ResponseEntity.ok(repository.findById(id).orElseThrow(() ->
+                new NotFoundException("Entity with id=" + id + " not found")));
     }
 
     @Operation(
@@ -67,7 +68,6 @@ public class RestaurantController {
     )
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(Views.Public.class)
-    @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Restaurant> creatWithLocation(@RequestBody @Valid Restaurant rest) {
         log.info("create {}", rest);
@@ -85,6 +85,7 @@ public class RestaurantController {
     )
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(Views.Public.class)
+    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void update(@RequestBody @Valid Restaurant rest, @PathVariable int id) {
@@ -101,5 +102,17 @@ public class RestaurantController {
     public List<RestaurantTo> getAll() {
         log.info("Restaurant getAll");
         return getTos(repository.getAllWithVotes());
+    }
+
+    @Operation(
+            summary = "получаем рестораны с историей голосований",
+            description = ""
+    )
+    @GetMapping("/history")
+    public List<RestaurantTo> getAllHistory(
+            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        log.info("Restaurant getAllHistory");
+        return getTosHistory(repository.getAllWithVotes(),startDateUtil(startDate) , endDateUtil(endDate));
     }
 }
