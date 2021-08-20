@@ -1,14 +1,12 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import ru.javaops.topjava2.web.Views;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -46,5 +44,10 @@ public class Vote extends BaseEntity {
         this.regDate = regDate;
         this.user = user;
         this.restaurant = restaurant;
+    }
+
+    public Vote(int id, LocalDate regDate) {
+        super(id);
+        this.regDate = regDate;
     }
 }

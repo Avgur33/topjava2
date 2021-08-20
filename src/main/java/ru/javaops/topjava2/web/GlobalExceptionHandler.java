@@ -32,8 +32,8 @@ import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.M
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String EXCEPTION_DUPLICATE_EMAIL = "User with this email already exists";
     public static final String EXCEPTION_DUPLICATE_VOTE = "exception.vote.duplicate";
-    private static final String EXCEPTION_DUPLICATE_RESTAURANT = "exception.restaurant.duplicate";
-    private static final String EXCEPTION_DUPLICATE_DISH = "exception.dish.duplicate";
+    public static final String EXCEPTION_DUPLICATE_RESTAURANT = "exception.restaurant.duplicate";
+    public static final String EXCEPTION_DUPLICATE_DISH = "exception.dish.duplicate";
 
     private static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
             "vote_unique_reg_date_user_id_idx", EXCEPTION_DUPLICATE_VOTE,

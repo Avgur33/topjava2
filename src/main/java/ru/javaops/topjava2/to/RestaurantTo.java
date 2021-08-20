@@ -26,19 +26,19 @@ public class RestaurantTo extends NamedTo implements HasId {
     @Range(min = 0, max = Integer.MAX_VALUE)
     Integer votes;
 
-    @NotNull
-    Map<LocalDate, Long> votesHistory;
+    //@NotNull
+    //Map<LocalDate, Long> votesHistory;
 
     public RestaurantTo(Integer id, String name, String location, Integer votes) {
         super(id, name);
         this.location = location;
         this.votes = votes;
-        this.votesHistory = null;
+        //this.votesHistory = null;
     }
-    public RestaurantTo(Integer id, String name, String location, Integer votes, Map<LocalDate, Long> votesHistory) {
+    /*public RestaurantTo(Integer id, String name, String location, Integer votes, Map<LocalDate, Long> votesHistory) {
         super(id, name);
         this.location = location;
         this.votes = votes;
         this.votesHistory = votesHistory;
-    }
+    }*/
 }

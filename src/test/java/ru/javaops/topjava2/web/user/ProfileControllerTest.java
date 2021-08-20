@@ -32,7 +32,7 @@ class ProfileControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHER.contentJson(user));
+                .andExpect(MATCHER.contentJson(user1));
     }
 
     @Test
@@ -75,7 +75,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        MATCHER.assertMatch(userRepository.getById(USER_ID), UserUtil.updateFromTo(new User(user), updatedTo));
+        MATCHER.assertMatch(userRepository.getById(USER_ID), UserUtil.updateFromTo(new User(user1), updatedTo));
     }
 
     @Test

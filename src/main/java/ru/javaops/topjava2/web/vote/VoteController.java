@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.repository.RestaurantRepository;
@@ -15,6 +17,7 @@ import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.to.VoteTo;
 import ru.javaops.topjava2.web.SecurityUtil;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -40,16 +43,16 @@ public class VoteController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void delete(@PathVariable int id) {
-        log.info("Vote delete {}", id);
-        repository.deleteExisted(id);
-    }
+            log.info("Vote delete {}", id);
+            repository.deleteExisted(id);
+}
 
     @Operation(
             summary = "register vote in system",
             description = "register vote in system if time before 11:00"
     )
     @PostMapping(value = "")
-    public void create(@RequestBody Integer restaurantId) {
+    public ResponseEntity<Vote> createWithLocation(@RequestParam Integer restaurantId) {
         log.info("create vote for restaurant {}", restaurantId);
         checkCurrentTime();
         Vote newVote = new Vote(
@@ -58,12 +61,16 @@ public class VoteController {
                 SecurityUtil.safeGet().getUser(),
                 restaurantRepository
                         .findById(restaurantId)
-                        .orElseThrow(() ->new NotFoundException("Entity Restaurant with id=" + restaurantId + " not found")));
-        repository.save(newVote);
+                        .orElseThrow(() ->new NotFoundException("Entity Restaurant with id= " + restaurantId + " not found")));
+        Vote created = repository.save(newVote);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @Operation(
-            summary = "update vote in system",
+            summary = "обновить голос",
             description = "update vote in system if time before 11:00"
     )
 
@@ -72,24 +79,41 @@ public class VoteController {
     @Transactional
     public void update(@RequestParam Integer restaurantId, @PathVariable Integer id) {
         log.info("update vote for restaurant {}", restaurantId);
-        //checkCurrentTime();
-        Vote vote = repository.getById(id);
+        checkCurrentTime();
+        Vote vote = repository
+                .getByIdWithUser(id)
+                .orElseThrow(()->new NotFoundException("Entity Vote with id= " + id + " not found"));
         checkCurrentDate(vote.getRegDate());
         //ToDo добавить метод для проверки валидности юзера с нормальным выводом сообщения об ошибке
         assureIdConsistent(vote.getUser(),SecurityUtil.safeGet().getUser().getId());
         vote.setRestaurant(restaurantRepository
                 .findById(restaurantId)
-                .orElseThrow(() ->new NotFoundException("Entity Restaurant with id=" + restaurantId + " not found")));
+                .orElseThrow(() ->new NotFoundException("Entity Restaurant with id= " + restaurantId + " not found")));
+    }
+
+    @Operation(
+            summary = "получить голос пользователя на сегодняшнее число",
+            description = "get all votes with user name and restaurant name"
+    )
+    @GetMapping("/by")
+    public ResponseEntity<Vote> getByUserId(@RequestParam Integer userId) {
+        log.info("Vote getByUserId");
+        assureIdConsistent(SecurityUtil.safeGet().getUser(),userId);
+        return ResponseEntity.ok(repository.getTodayUserVote(userId)
+                .orElseThrow(() ->new NotFoundException("User id= " + userId + " not voted yet")));
     }
 
     @Operation(
             summary = "get all votes",
             description = "get all votes with user name and restaurant name"
     )
+
     //ToDo добавить фильтры
-    @GetMapping
+    @GetMapping()
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<VoteTo> getAll() {
         log.info("Vote getAll");
         return getTos(repository.getAllWithUserAndRestaurant());
     }
+
 }

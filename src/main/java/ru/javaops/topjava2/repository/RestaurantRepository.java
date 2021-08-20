@@ -9,6 +9,6 @@ import java.util.List;
 public interface RestaurantRepository extends BaseRepository<Restaurant>{
 
     @EntityGraph(attributePaths = {"votes"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT r FROM Restaurant r WHERE  size(r.dishes) > 0 ")
+    @Query("SELECT r FROM Restaurant r")
     List<Restaurant> getAllWithVotes();
 }

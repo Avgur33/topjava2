@@ -15,7 +15,6 @@ import java.util.List;
         {@UniqueConstraint(columnNames = {"name", "location"}, name = "restaurant_unique_name_location_idx")})
 @Getter
 @Setter
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @ToString(callSuper = true)
 public class Restaurant extends NamedEntity {
@@ -43,8 +42,14 @@ public class Restaurant extends NamedEntity {
         super(id, name);
         this.location = location;
     }
-    public Restaurant(Integer id ) {
-        super(id, null);
+    public Restaurant( Restaurant r ) {
+        this(r.id,r.name, r.location,r.votes,r.dishes);
     }
 
+    public Restaurant(Integer id, String name, String location, List<Vote> votes, List<Dish> dishes) {
+        super(id,name);
+        this.location = location;
+        this.votes = votes;
+        this.dishes = dishes;
+    }
 }

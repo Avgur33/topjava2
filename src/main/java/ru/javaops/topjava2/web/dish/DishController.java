@@ -21,7 +21,6 @@ import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.web.Views;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -61,7 +60,9 @@ public class DishController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void delete(@PathVariable @Min(1) int id) {
+    public void delete(@PathVariable Integer restaurantId, @PathVariable Integer id) {
+        //ToDo проверка на соответствие ресторана блюду
+
         log.info("Restaurant delete {}", id);
         repository.deleteExisted(id);
     }

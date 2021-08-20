@@ -1,13 +1,11 @@
 INSERT INTO users (name, email, password)
 VALUES ('User', 'user@yandex.ru', '{noop}password'),    --1
-       ('Admin', 'admin@gmail.com', '{noop}admin'),     --2
-       ('User2', 'user2@gmail.com', '{noop}password');  --3
+       ('Admin', 'admin@gmail.com', '{noop}admin');     --2
 
 INSERT INTO user_roles (role, user_id)
 VALUES ('USER', 1),
        ('ADMIN', 2),
-       ('USER', 2),
-       ('USER', 3);
+       ('USER', 2);
 
 INSERT INTO restaurant (name, location)
 VALUES ('Burger King','Moscow'),
@@ -37,7 +35,5 @@ VALUES ('burger 1','100',  now()-INTERVAL 1 DAY ,1),
 INSERT INTO vote (user_id, restaurant_id, reg_date)
 VALUES (1, 1, now()-INTERVAL 1 DAY),
        (2, 2, now()-INTERVAL 1 DAY),
-       (3, 3, now()-INTERVAL 1 DAY),
        (1, 1, now()),
-       (2, 2, now()),
-       (3, 3, now());
+       (2, 2, now());

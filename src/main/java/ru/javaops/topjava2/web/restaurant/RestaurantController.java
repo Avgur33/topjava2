@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +19,9 @@ import ru.javaops.topjava2.web.Views;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
-import static ru.javaops.topjava2.util.DateUtil.endDateUtil;
-import static ru.javaops.topjava2.util.DateUtil.startDateUtil;
 import static ru.javaops.topjava2.util.RestaurantUtil.getTos;
-import static ru.javaops.topjava2.util.RestaurantUtil.getTosHistory;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
@@ -54,9 +48,10 @@ public class RestaurantController {
     @Operation(
             summary = "удалить ресторан по айдишнику"
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void delete(@PathVariable int id) {
         log.info("Restaurant delete {}", id);
         repository.deleteExisted(id);
@@ -95,7 +90,7 @@ public class RestaurantController {
     }
 
     @Operation(
-            summary = "получаем рестораны у которых есть еда с количеством голосов за текущий день",
+            summary = "получаем рестораны с количеством голосов за текущий день",
             description = ""
     )
     @GetMapping
@@ -104,7 +99,7 @@ public class RestaurantController {
         return getTos(repository.getAllWithVotes());
     }
 
-    @Operation(
+/*    @Operation(
             summary = "получаем рестораны с историей голосований",
             description = ""
     )
@@ -114,5 +109,5 @@ public class RestaurantController {
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         log.info("Restaurant getAllHistory");
         return getTosHistory(repository.getAllWithVotes(),startDateUtil(startDate) , endDateUtil(endDate));
-    }
+    }*/
 }
