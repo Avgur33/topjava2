@@ -40,6 +40,7 @@ public class DishController {
     private final RestaurantRepository restaurantRepository;
     public final static String REST_URL = "/api/restaurants/{restaurantId}/dishes";
 
+    //ToDO add test this method
     @Operation(
             summary = "получить список еды для ресторана историю, поставить валидацию времени",
             description = "get all dishes with restaurant between startDate and endDate"
@@ -51,7 +52,6 @@ public class DishController {
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return getTos(repository.getHistory(restaurantId, startDateUtil(startDate) , endDateUtil(endDate)));
     }
-
 
     @Operation(
             summary = "delete by id",
@@ -71,26 +71,39 @@ public class DishController {
             summary = "получить список еды для ресторана",
             description = "получаем список еды для ресторана на текущую дату"
     )
-    @JsonView(Views.Public.class)
     @GetMapping()
-    public List<Dish> getDishes(@PathVariable int restaurantId) {
+    public List<Dish> getAll(@PathVariable int restaurantId) {
         log.info("get dishes for restaurant {}", restaurantId);
         return repository.getDishesByRestaurantId(restaurantId);
+    }
+
+    @Operation(
+            summary = "п",
+            description = "п"
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<Dish> get(@PathVariable Integer restaurantId,@PathVariable Integer id) {
+        log.info("get dish by ID for restaurant {}", restaurantId);
+        Dish dish = repository
+                .findByIdWithRestaurant(id)
+                .orElseThrow(()-> new NotFoundException("Dish with id="+id+ "dont belong for restaurant with id"+restaurantId));
+        assureIdConsistent(dish.getRestaurant(),restaurantId);
+        return ResponseEntity.ok(dish);
     }
 
     @Operation(
             summary = "создаем еду для ресторана, нужно подумать про текущую дату",
             description = ""
     )
-    @JsonView(Views.Public.class)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional
     public ResponseEntity<Dish> creatWithLocation(@PathVariable int restaurantId, @Valid @RequestBody Dish dish) {
         log.info("create {}", dish);
         checkNew(dish);
         dish.setForDate(LocalDate.now());
         dish.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow(() ->
-                new NotFoundException("Entity with id=" + restaurantId + " not found")));
+                new NotFoundException("Restaurant with id=" + restaurantId + " not found")));
         Dish created = repository.save(dish);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -98,12 +111,10 @@ public class DishController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-
     @Operation(
             summary = "обновляем еду",
             description = ""
     )
-    @JsonView(Views.Public.class)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional

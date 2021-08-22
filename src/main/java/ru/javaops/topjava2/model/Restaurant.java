@@ -19,7 +19,6 @@ import java.util.List;
 @ToString(callSuper = true)
 public class Restaurant extends NamedEntity {
 
-    @JsonView(Views.Public.class)
     @Column(name = "location", nullable = false)
     @NotBlank
     @Size(min = 5, max = 100)
@@ -27,14 +26,12 @@ public class Restaurant extends NamedEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @JsonManagedReference(value = "restaurant-vote")
-    @JsonView(Views.Inner.class)
     @ToString.Exclude
     private List<Vote> votes;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     //@OrderBy("price DESC")
     @JsonManagedReference(value = "restaurant-dish")
-    @JsonView(Views.Inner.class)
     @ToString.Exclude
     private List<Dish> dishes;
 

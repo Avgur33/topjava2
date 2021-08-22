@@ -22,7 +22,6 @@ public abstract class BaseEntity implements Persistable<Integer>, HasId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(Views.Public.class)
     protected Integer id;
 
     // doesn't work for hibernate lazy proxy

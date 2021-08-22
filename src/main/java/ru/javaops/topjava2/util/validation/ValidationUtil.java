@@ -33,11 +33,12 @@ public class ValidationUtil {
         }
     }
 
-    public static void checkCurrentTime(){
-        if (LocalTime.now().isAfter(LocalTime.of(11,0))) {
-            throw new LateTimeException("Voting ended at 11 o'clock");
+    public static void checkCurrentTime(LocalTime time){
+        if (LocalTime.now().isAfter(time)) {
+            throw new LateTimeException("Voting ended at {}" + time + "o'clock");
         }
     }
+
     public static void checkCurrentDate(LocalDate ld){
         if (LocalDate.now().compareTo(ld) !=0 ) {
             throw new LateTimeException("Vote can only be changed for today");
@@ -63,7 +64,4 @@ public class ValidationUtil {
             throw new NotFoundException("Not found entity with " + msg);
         }
     }
-
-
-
 }

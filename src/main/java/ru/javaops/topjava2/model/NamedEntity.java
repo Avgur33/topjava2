@@ -22,7 +22,6 @@ public abstract class NamedEntity extends BaseEntity {
     @NotBlank
     @Size(min = 2, max = 100)
     @Column(name = "name", nullable = false)
-    @JsonView(Views.Public.class)
     protected String name;
 
     protected NamedEntity(Integer id, String name) {

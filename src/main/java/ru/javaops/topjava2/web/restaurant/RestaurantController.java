@@ -37,7 +37,6 @@ public class RestaurantController {
             summary = "получить ресторан по айдишнику",
             description = "получаем только ресторан"
     )
-    @JsonView(Views.Public.class)
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> get(@PathVariable int id) {
         log.info("get {}", id);
@@ -62,7 +61,6 @@ public class RestaurantController {
             description = ""
     )
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @JsonView(Views.Public.class)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Restaurant> creatWithLocation(@RequestBody @Valid Restaurant rest) {
         log.info("create {}", rest);
@@ -79,7 +77,6 @@ public class RestaurantController {
             description = ""
     )
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @JsonView(Views.Public.class)
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_ADMIN')")

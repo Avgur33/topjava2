@@ -46,6 +46,10 @@ public class Vote extends BaseEntity {
         this.restaurant = restaurant;
     }
 
+    public Vote( Vote v){
+        this(v.id, v.regDate,v.user,v.restaurant);
+    }
+
     public Vote(int id, LocalDate regDate) {
         super(id);
         this.regDate = regDate;

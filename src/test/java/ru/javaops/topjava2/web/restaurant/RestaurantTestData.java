@@ -12,7 +12,6 @@ public class RestaurantTestData extends AbstractTestData {
     public static final MatcherFactory.Matcher<Restaurant> MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Restaurant.class, "votes", "dishes");
     public static final MatcherFactory.Matcher<RestaurantTo> MATCHERTO = MatcherFactory.usingIgnoringFieldsComparator(RestaurantTo.class);
 
-    public static final int REST1_ID = 1;
     public static final Restaurant rest1 = new Restaurant(REST1_ID, "Burger King","Moscow");
     public static final Restaurant rest2 = new Restaurant(REST1_ID + 1, "Pho Bo","Moscow");
     public static final Restaurant rest3 = new Restaurant(REST1_ID + 2, "KFC","Moscow");

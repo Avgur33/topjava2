@@ -49,6 +49,13 @@ class RestaurantControllerTest extends AbstractControllerTest {
         //ToDo посмотреть возвращаемую ошибку
         //.andExpect(status().isNotFound());
     }
+    @Test
+    void getUnAuth() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL))
+                .andExpect(status().isUnauthorized());
+    }
+
+    //ToDo check on delete cascade
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
@@ -65,12 +72,6 @@ class RestaurantControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
-    }
-
-    @Test
-    void getUnAuth() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
-                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -120,7 +121,6 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(containsString(GlobalExceptionHandler.EXCEPTION_DUPLICATE_RESTAURANT)));
     }
-
     @Test
     @Transactional(propagation = Propagation.NEVER)
     @WithUserDetails(value = ADMIN_MAIL)

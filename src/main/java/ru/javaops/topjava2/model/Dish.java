@@ -21,22 +21,20 @@ import java.time.LocalDate;
 @ToString(callSuper = true)
 public class Dish extends NamedEntity {
 
-    @JsonView(Views.Public.class)
     @Column(name = "price", nullable = false)
     @NotNull
     @Range(min = 10)
     private Integer price;
 
-    @JsonView(Views.Inner.class)
     @Column(name = "for_date", nullable = false, columnDefinition = "date default now()")
     //@NotNull
     private LocalDate forDate;
 
-    @JsonView(Views.Inner.class)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference(value = "restaurant-dish")
+    @ToString.Exclude
     private Restaurant restaurant;
 
     public Dish(Integer id, String name, Integer price, LocalDate forDate) {
