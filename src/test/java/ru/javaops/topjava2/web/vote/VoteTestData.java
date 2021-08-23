@@ -17,6 +17,7 @@ import static ru.javaops.topjava2.web.user.UserTestData.user1;
 public class VoteTestData extends AbstractTestData {
 
     public static final MatcherFactory.Matcher<Vote> MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "restaurant", "user");
+    //ToDo заменить MATCHERTO
     public static final MatcherFactory.Matcher<VoteTo> MATCHERTO = MatcherFactory.usingIgnoringFieldsComparator(VoteTo.class, "", "");
 
     public static final Integer VOTE3_ID = 3;

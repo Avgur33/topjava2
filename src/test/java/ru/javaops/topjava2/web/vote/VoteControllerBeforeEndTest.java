@@ -1,19 +1,15 @@
 package ru.javaops.topjava2.web.vote;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaops.topjava2.model.Vote;
-import ru.javaops.topjava2.repository.VoteRepository;
-import ru.javaops.topjava2.web.AbstractControllerTest;
 import ru.javaops.topjava2.web.GlobalExceptionHandler;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,12 +28,7 @@ import static ru.javaops.topjava2.web.vote.VoteTestData.*;
         "timeLimit.min=59"
 })
 
-class VoteControllerTest extends AbstractControllerTest {
-
-    private static final String REST_URL = VoteController.REST_URL + '/';
-    private static final LocalTime TIME_LIMIT = LocalTime.of(11,00);
-    @Autowired
-    private VoteRepository voteRepository;
+class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
@@ -59,7 +50,6 @@ class VoteControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnprocessableEntity());
     }
 
-    //Todo добавить что админ может получать любой голос
     @Test
     @WithUserDetails(value = USER_MAIL)
     void getNotOwn() throws Exception {
@@ -79,7 +69,6 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void update() throws Exception {
-        if (LocalTime.now().isBefore(TIME_LIMIT)) {
             Vote updated = getUpdated();
             updated.setId(null);
             perform(MockMvcRequestBuilders
@@ -91,20 +80,6 @@ class VoteControllerTest extends AbstractControllerTest {
             updated = voteRepository.getById(VOTE3_ID);
             MATCHER.assertMatch(updated, getUpdated());
             assertEquals(REST2_ID, updated.getRestaurant().id());
-        }
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void updateLate() throws Exception {
-        //ToDo как подменить глобальную переменную на время выполнения тестирования вынести в параметры
-        if (LocalTime.now().isAfter(TIME_LIMIT)) {
-            perform(MockMvcRequestBuilders
-                    .patch(REST_URL + VOTE3_ID)
-                    .param("restaurantId", Integer.toString(REST2_ID)))
-                    .andDo(print())
-                    .andExpect(status().isLocked());
-        }
     }
 
     @Test
@@ -228,18 +203,5 @@ class VoteControllerTest extends AbstractControllerTest {
                 .param("restaurantId", Integer.toString(NOT_FOUND)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void createLate() throws Exception {
-        if (LocalTime.now().isAfter(TIME_LIMIT)) {
-            perform(MockMvcRequestBuilders
-                    .post(REST_URL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .param("restaurantId", Integer.toString(REST1_ID)))
-                    .andDo(print())
-                    .andExpect(status().isLocked());
-        }
     }
 }
