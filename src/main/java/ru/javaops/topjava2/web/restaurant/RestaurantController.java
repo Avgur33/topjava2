@@ -1,6 +1,9 @@
 package ru.javaops.topjava2.web.restaurant;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
@@ -34,15 +37,19 @@ public class RestaurantController {
     public final static String REST_URL = "/api/restaurants";
 
     @Operation(
-            summary = "Get restaurant"
+            summary = "Get restaurant by restaurant id"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "" ),
+            @ApiResponse(responseCode = "200",
+                    description = "The restaurant",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Restaurant.class))),
             @ApiResponse(responseCode = "422", description = "Error"),
             @ApiResponse(responseCode = "401", description = "Error")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Restaurant> get(@PathVariable int id) {
+    public ResponseEntity<Restaurant> get(
+            @Parameter(description = "The id of restaurant that needs to be fetched. Use 1 for testing.", required = true)@PathVariable int id) {
         log.info("get {}", id);
         return ResponseEntity.ok(repository.findById(id).orElseThrow(() ->
                 new NotFoundException("Entity with id=" + id + " not found")));
@@ -53,7 +60,7 @@ public class RestaurantController {
             description = "Only for Admin"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "" ),
+            @ApiResponse(responseCode = "204", description = ""),
             @ApiResponse(responseCode = "422", description = "Error"),
             @ApiResponse(responseCode = "403", description = "Error"),
             @ApiResponse(responseCode = "401", description = "Error")
@@ -72,7 +79,7 @@ public class RestaurantController {
             description = "Only for Admin"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "" ),
+            @ApiResponse(responseCode = "200", description = ""),
             @ApiResponse(responseCode = "422", description = "Error"),
             @ApiResponse(responseCode = "403", description = "Error"),
             @ApiResponse(responseCode = "401", description = "Error")
@@ -94,7 +101,7 @@ public class RestaurantController {
             description = "Only for Admin"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "" ),
+            @ApiResponse(responseCode = "204", description = ""),
             @ApiResponse(responseCode = "422", description = "Error"),
             @ApiResponse(responseCode = "403", description = "Error"),
             @ApiResponse(responseCode = "401", description = "Error")
@@ -114,7 +121,7 @@ public class RestaurantController {
             description = ""
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "" ),
+            @ApiResponse(responseCode = "200", description = ""),
             @ApiResponse(responseCode = "422", description = "Error"),
             @ApiResponse(responseCode = "401", description = "Error")
     })
