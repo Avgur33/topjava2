@@ -1,9 +1,9 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import ru.javaops.topjava2.web.Views;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -27,12 +27,14 @@ public class Restaurant extends NamedEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @JsonManagedReference(value = "restaurant-vote")
     @ToString.Exclude
+    @Hidden
     private List<Vote> votes;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     //@OrderBy("price DESC")
     @JsonManagedReference(value = "restaurant-dish")
     @ToString.Exclude
+    @Hidden
     private List<Dish> dishes;
 
     public Restaurant(Integer id, String name, String location) {

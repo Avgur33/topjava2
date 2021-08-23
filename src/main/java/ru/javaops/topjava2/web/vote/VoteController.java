@@ -1,6 +1,7 @@
 package ru.javaops.topjava2.web.vote;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -32,7 +33,6 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.*;
 @RestController
 @RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-@PropertySource("classpath:application.yaml")
 public class VoteController {
     public VoteController(RestaurantRepository restaurantRepository, VoteRepository repository) {
         this.restaurantRepository = restaurantRepository;
@@ -51,23 +51,22 @@ public class VoteController {
     private final VoteRepository repository;
 
     @Operation(
-            summary = "п",
-            description = "п"
+            summary = "Get vote",
+            description = "For Authenticated user"
     )
     @GetMapping("/{id}")
     public ResponseEntity<Vote> get(@PathVariable Integer id) {
         log.info("get vote by id={} for Authenticated user", id);
         Vote vote = repository
                 .getByIdWithUser(id)
-                .orElseThrow(() -> new NotFoundException("Entity vote with id={}" + id + "not found"));
+                .orElseThrow(() -> new NotFoundException("Entity vote with id = " + id + "not found"));
         assureIdConsistent(vote.getUser(),SecurityUtil.safeGet().id());
         return ResponseEntity.ok(vote);
     }
 
-
     @Operation(
-            summary = "delete vote in system",
-            description = "only for admin"
+            summary = "Delete vote",
+            description = "Only for admin"
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -78,8 +77,8 @@ public class VoteController {
     }
 
     @Operation(
-            summary = "register vote in system",
-            description = "register vote in system if time before 11:00"
+            summary = "Register vote in system for Authenticated user",
+            description = "Register vote in system if time before 11:00"
     )
     @PostMapping(value = "")
     public ResponseEntity<Vote> createWithLocation(@RequestParam @NotNull @Min(1) Integer restaurantId) {
@@ -100,16 +99,14 @@ public class VoteController {
     }
 
     @Operation(
-            summary = "обновить голос",
-            description = "update vote in system if time before 11:00"
+            summary = "Update vote in system for Authenticated user",
+            description = "Update vote in system if time before 11:00"
     )
-
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
     public void update(@RequestParam Integer restaurantId, @PathVariable Integer id) {
         log.info("update vote for restaurant {}", restaurantId);
-        //checkCurrentTime(LocalTime.parse(TIME_LIMIT));
         checkCurrentTime(LocalTime.of(LIMIT_HOUR,LIMIT_MIN));
         Vote vote = repository
                 .getByIdWithUser(id)
@@ -122,8 +119,8 @@ public class VoteController {
     }
 
     @Operation(
-            summary = "get all votes",
-            description = "get all votes with user name and restaurant name"
+            summary = "Get all votes",
+            description = "Get all votes with user name and restaurant name only for Admin"
     )
 
     @GetMapping()
@@ -132,4 +129,18 @@ public class VoteController {
         log.info("Vote getAll");
         return getTos(repository.getAllWithUserAndRestaurant());
     }
+
+
+    @Operation(
+            summary = "Get current vote for Authenticated user",
+            description = "Get all votes with user name and restaurant name only for Admin"
+    )
+
+    @GetMapping("/history")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<VoteTo> getAllHistory() {
+        log.info("Vote getAll");
+        return getTos(repository.getAllWithUserAndRestaurant());
+    }
+
 }

@@ -1,6 +1,8 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +25,7 @@ public class Vote extends BaseEntity {
 
     @Column(name = "reg_date", nullable = false,columnDefinition = "date default now()")
     @NotNull
+    @Schema(description = "Registration date", example = "2020-02-20",format = "yyyy-MM-dd")
     private LocalDate regDate;
 
 
@@ -30,6 +33,7 @@ public class Vote extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
+    @Hidden
     private User user;
 
 
@@ -37,6 +41,7 @@ public class Vote extends BaseEntity {
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference(value = "restaurant-vote")
+    @Hidden
     private Restaurant restaurant;
 
     public Vote(Integer id, LocalDate regDate, User user, Restaurant restaurant) {
@@ -47,7 +52,7 @@ public class Vote extends BaseEntity {
     }
 
     public Vote( Vote v){
-        this(v.id, v.regDate,v.user,v.restaurant);
+        this(v.getId(), v.getRegDate(),v.getUser(),v.getRestaurant());
     }
 
     public Vote(int id, LocalDate regDate) {

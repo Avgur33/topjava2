@@ -1,7 +1,8 @@
 package ru.javaops.topjava2.web.restaurant;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,6 @@ import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.RestaurantTo;
-import ru.javaops.topjava2.web.Views;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -34,9 +34,13 @@ public class RestaurantController {
     public final static String REST_URL = "/api/restaurants";
 
     @Operation(
-            summary = "получить ресторан по айдишнику",
-            description = "получаем только ресторан"
+            summary = "Get restaurant"
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "" ),
+            @ApiResponse(responseCode = "422", description = "Error"),
+            @ApiResponse(responseCode = "401", description = "Error")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> get(@PathVariable int id) {
         log.info("get {}", id);
@@ -45,8 +49,15 @@ public class RestaurantController {
     }
 
     @Operation(
-            summary = "удалить ресторан по айдишнику"
+            summary = "Delete restaurant",
+            description = "Only for Admin"
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "" ),
+            @ApiResponse(responseCode = "422", description = "Error"),
+            @ApiResponse(responseCode = "403", description = "Error"),
+            @ApiResponse(responseCode = "401", description = "Error")
+    })
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -57,9 +68,15 @@ public class RestaurantController {
     }
 
     @Operation(
-            summary = "создаем ресторан",
-            description = ""
+            summary = "Create restaurant",
+            description = "Only for Admin"
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "" ),
+            @ApiResponse(responseCode = "422", description = "Error"),
+            @ApiResponse(responseCode = "403", description = "Error"),
+            @ApiResponse(responseCode = "401", description = "Error")
+    })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Restaurant> creatWithLocation(@RequestBody @Valid Restaurant rest) {
@@ -73,9 +90,15 @@ public class RestaurantController {
     }
 
     @Operation(
-            summary = "обновляем ресторан",
-            description = ""
+            summary = "Update restaurant",
+            description = "Only for Admin"
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "" ),
+            @ApiResponse(responseCode = "422", description = "Error"),
+            @ApiResponse(responseCode = "403", description = "Error"),
+            @ApiResponse(responseCode = "401", description = "Error")
+    })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -87,9 +110,14 @@ public class RestaurantController {
     }
 
     @Operation(
-            summary = "получаем рестораны с количеством голосов за текущий день",
+            summary = "Get all restaurants with number of votes for today",
             description = ""
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "" ),
+            @ApiResponse(responseCode = "422", description = "Error"),
+            @ApiResponse(responseCode = "401", description = "Error")
+    })
     @GetMapping
     public List<RestaurantTo> getAll() {
         log.info("Restaurant getAll");

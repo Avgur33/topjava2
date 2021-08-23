@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.user;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -29,12 +30,18 @@ public class AdminUserController extends AbstractUserController {
 
     static final String REST_URL = "/api/admin/users";
 
+    @Operation(
+            summary = "Get user"
+    )
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<User> get(@PathVariable int id) {
         return super.get(id);
     }
 
+    @Operation(
+            summary = "Delete user"
+    )
     @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -42,6 +49,10 @@ public class AdminUserController extends AbstractUserController {
         super.delete(id);
     }
 
+    @Operation(
+            summary = "Get all users",
+            description = "Sort.Direction.ASC by name and email"
+    )
     @GetMapping
     @Cacheable
     public List<User> getAll() {
@@ -49,6 +60,9 @@ public class AdminUserController extends AbstractUserController {
         return repository.findAll(Sort.by(Sort.Direction.ASC, "name", "email"));
     }
 
+    @Operation(
+            summary = "Create user"
+    )
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(allEntries = true)
     public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user) {
@@ -61,6 +75,9 @@ public class AdminUserController extends AbstractUserController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+    @Operation(
+            summary = "Update user"
+    )
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(allEntries = true)
@@ -70,12 +87,18 @@ public class AdminUserController extends AbstractUserController {
         prepareAndSave(user);
     }
 
+    @Operation(
+            summary = "Get user by email"
+    )
     @GetMapping("/by")
     public ResponseEntity<User> getByEmail(@RequestParam String email) {
         log.info("getByEmail {}", email);
         return ResponseEntity.of(repository.getByEmail(email));
     }
 
+    @Operation(
+            summary = "Set enable or disable status for user"
+    )
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional

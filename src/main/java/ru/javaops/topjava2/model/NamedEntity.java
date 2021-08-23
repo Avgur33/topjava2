@@ -1,11 +1,9 @@
 package ru.javaops.topjava2.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.javaops.topjava2.web.Views;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;

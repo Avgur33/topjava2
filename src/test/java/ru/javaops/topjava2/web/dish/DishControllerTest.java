@@ -14,6 +14,8 @@ import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 import ru.javaops.topjava2.web.GlobalExceptionHandler;
 
+import java.time.LocalDate;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -247,5 +249,45 @@ class DishControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MATCHER.contentJson(dishesOfRestaurant1));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getHistory() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes/history")
+                .param("startDate","")
+                .param("endDate",""))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MATCHER.contentJson(dishesOfRestaurant1));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getHistoryYesterday() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes/history")
+                .param("startDate", LocalDate.now().minusDays(1).toString())
+                .param("endDate",LocalDate.now().minusDays(1).toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MATCHER.contentJson(dish1,dish2,dish3));
+    }
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getHistoryEmpty() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes/history")
+                .param("startDate", LocalDate.now().minusDays(10).toString())
+                .param("endDate",LocalDate.now().minusDays(9).toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getHistoryNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND + "/dishes/history")
+                .param("startDate", LocalDate.now().minusDays(10).toString())
+                .param("endDate",LocalDate.now().minusDays(9).toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 }

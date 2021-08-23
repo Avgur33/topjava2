@@ -1,12 +1,12 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
-import ru.javaops.topjava2.web.Views;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -27,6 +27,7 @@ public class Dish extends NamedEntity {
     private Integer price;
 
     @Column(name = "for_date", nullable = false, columnDefinition = "date default now()")
+    @Schema(description = "For this date", example = "2020-02-20",format = "yyyy-MM-dd")
     //@NotNull
     private LocalDate forDate;
 
@@ -35,6 +36,8 @@ public class Dish extends NamedEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference(value = "restaurant-dish")
     @ToString.Exclude
+    @Hidden
+    //@NotNull
     private Restaurant restaurant;
 
     public Dish(Integer id, String name, Integer price, LocalDate forDate) {

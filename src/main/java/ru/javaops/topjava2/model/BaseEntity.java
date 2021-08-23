@@ -1,13 +1,12 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.util.ProxyUtils;
 import org.springframework.util.Assert;
 import ru.javaops.topjava2.HasId;
-import ru.javaops.topjava2.web.Views;
 
 import javax.persistence.*;
 
@@ -22,6 +21,7 @@ public abstract class BaseEntity implements Persistable<Integer>, HasId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Identificator")
     protected Integer id;
 
     // doesn't work for hibernate lazy proxy

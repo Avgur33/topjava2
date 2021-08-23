@@ -1,6 +1,5 @@
 package ru.javaops.topjava2.web.dish;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,6 @@ import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.DishTo;
-import ru.javaops.topjava2.web.Views;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -40,10 +38,9 @@ public class DishController {
     private final RestaurantRepository restaurantRepository;
     public final static String REST_URL = "/api/restaurants/{restaurantId}/dishes";
 
-    //ToDO add test this method
     @Operation(
-            summary = "получить список еды для ресторана историю, поставить валидацию времени",
-            description = "get all dishes with restaurant between startDate and endDate"
+            summary = "Get all dishes for restaurant",
+            description = "get dishes between startDate and endDate"
     )
     @GetMapping(value = "/history")
     public List<DishTo> getHistory(
@@ -54,8 +51,8 @@ public class DishController {
     }
 
     @Operation(
-            summary = "delete by id",
-            description = ""
+            summary = "Delete dish",
+            description = "Only for Admin"
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -68,8 +65,7 @@ public class DishController {
     }
 
     @Operation(
-            summary = "получить список еды для ресторана",
-            description = "получаем список еды для ресторана на текущую дату"
+            summary = "Get dishes for restaurant for the current date"
     )
     @GetMapping()
     public List<Dish> getAll(@PathVariable int restaurantId) {
@@ -78,8 +74,7 @@ public class DishController {
     }
 
     @Operation(
-            summary = "п",
-            description = "п"
+            summary = "Get dish for restaurant"
     )
     @GetMapping("/{id}")
     public ResponseEntity<Dish> get(@PathVariable Integer restaurantId,@PathVariable Integer id) {
@@ -92,9 +87,10 @@ public class DishController {
     }
 
     @Operation(
-            summary = "создаем еду для ресторана, нужно подумать про текущую дату",
-            description = ""
+            summary = "Create dish for restaurant",
+            description = "Only for Admin, for today"
     )
+    //ToDo поставить запрет на создание еды после 11 часов
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional
@@ -112,8 +108,8 @@ public class DishController {
     }
 
     @Operation(
-            summary = "обновляем еду",
-            description = ""
+            summary = "Update dish",
+            description = "Only for Admin"
     )
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
