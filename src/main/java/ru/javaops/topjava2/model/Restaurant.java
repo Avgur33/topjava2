@@ -40,7 +40,7 @@ public class Restaurant extends NamedEntity {
         this.location = location;
     }
     public Restaurant( Restaurant r ) {
-        this(r.id,r.name, r.location,r.votes,r.dishes);
+        this(r.getId(),r.getName(), r.getLocation(),r.getVotes(),r.getDishes());
     }
 
     public Restaurant(Integer id, String name, String location, List<Vote> votes, List<Dish> dishes) {
