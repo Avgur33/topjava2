@@ -1,8 +1,8 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Hidden;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,8 +15,9 @@ import java.util.List;
         {@UniqueConstraint(columnNames = {"name", "location"}, name = "restaurant_unique_name_location_idx")})
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true)
+
 public class Restaurant extends NamedEntity {
 
     @Column(name = "location", nullable = false)
@@ -26,29 +27,32 @@ public class Restaurant extends NamedEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @JsonManagedReference(value = "restaurant-vote")
-    @ToString.Exclude
     @Hidden
+    @ToString.Exclude
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Vote> votes;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     //@OrderBy("price DESC")
     @JsonManagedReference(value = "restaurant-dish")
-    @ToString.Exclude
     @Hidden
+    @ToString.Exclude
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Dish> dishes;
+
+    public Restaurant(Restaurant r) {
+        this(r.getId(), r.getName(), r.getLocation(), r.getVotes(), r.getDishes());
+    }
+
+    public Restaurant(Integer id, String name, String location, List<Vote> votes, List<Dish> dishes) {
+        super(id, name);
+        this.location = location;
+        this.votes = votes;
+        this.dishes = dishes;
+    }
 
     public Restaurant(Integer id, String name, String location) {
         super(id, name);
         this.location = location;
-    }
-    public Restaurant( Restaurant r ) {
-        this(r.getId(),r.getName(), r.getLocation(),r.getVotes(),r.getDishes());
-    }
-
-    public Restaurant(Integer id, String name, String location, List<Vote> votes, List<Dish> dishes) {
-        super(id,name);
-        this.location = location;
-        this.votes = votes;
-        this.dishes = dishes;
     }
 }

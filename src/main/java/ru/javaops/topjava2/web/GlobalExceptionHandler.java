@@ -19,6 +19,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.javaops.topjava2.error.AppException;
+import ru.javaops.topjava2.error.LateTimeException;
+import ru.javaops.topjava2.error.NotFoundException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Map;
@@ -63,18 +65,31 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return createResponseEntity(getDefaultBody(request, ex.getOptions(), null), ex.getStatus());
     }
 
+    //422
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> persistException(WebRequest request, NotFoundException ex) {
+        log.error("EntityNotFoundException ", ex);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    //423
+    @ExceptionHandler(LateTimeException.class)
+    public ResponseEntity<?> lateException(WebRequest request, LateTimeException ex) {
+        log.error("LateTimeException", ex);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.LOCKED);
+    }
+    //422
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> persistException(WebRequest request, EntityNotFoundException ex) {
         log.error("EntityNotFoundException ", ex);
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
     }
-
+    //400
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> typeMismatchException(WebRequest request, MethodArgumentTypeMismatchException ex) {
         log.error("IllegalArgumentException ", ex);
-        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.defaults(), "incorrect data format " + ex.getName()), HttpStatus.BAD_REQUEST);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.defaults(), "Invalid data format of" + ex.getName()), HttpStatus.BAD_REQUEST);
     }
-
+    //422
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> conflictException(WebRequest request, DataIntegrityViolationException ex) {
         log.error("DataIntegrityViolationException ", ex);
@@ -89,7 +104,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         }
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
     }
-
 
     private ResponseEntity<Object> handleBindingErrors(BindingResult result, WebRequest request) {
         String msg = result.getFieldErrors().stream()

@@ -1,4 +1,8 @@
 #  https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+my:
+  time: '11:00:00'
+limittime:
+  time: 11:00:00
 timeLimit:
   hour: 11
   min: 00
@@ -31,7 +35,8 @@ spring:
       getter: none
       setter: none
       is-getter: none
-
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+    time-zone: UTC
   # https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#common-application-properties-cache
   cache:
     cache-names: users

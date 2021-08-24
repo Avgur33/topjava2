@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import ru.javaops.topjava2.util.JsonUtil;
+import ru.javaops.topjava2.web.converter.TimeConverter;
 
 import java.sql.SQLException;
 

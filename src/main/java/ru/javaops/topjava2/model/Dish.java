@@ -28,7 +28,7 @@ public class Dish extends NamedEntity {
 
     @Column(name = "for_date", nullable = false, columnDefinition = "date default now()")
     @Schema(description = "For this date", example = "2020-02-20",format = "yyyy-MM-dd")
-    //@NotNull
+    @NotNull
     private LocalDate forDate;
 
     @JoinColumn(name = "restaurant_id", nullable = false)
