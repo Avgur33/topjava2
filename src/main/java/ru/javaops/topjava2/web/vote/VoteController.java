@@ -3,6 +3,7 @@ package ru.javaops.topjava2.web.vote;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.javaops.topjava2.config.TimeConfig;
 import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.repository.RestaurantRepository;
@@ -33,23 +33,14 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.*;
 @RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 public class VoteController {
-    public VoteController(TimeConfig timeConfig, RestaurantRepository restaurantRepository, VoteRepository repository) {
-        this.timeConfig = timeConfig;
+    public VoteController(RestaurantRepository restaurantRepository, VoteRepository repository) {
         this.restaurantRepository = restaurantRepository;
         this.repository = repository;
     }
+    @Value("${limittime.time}")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    private LocalTime timeLimit;
 
-    //ToDo написать свой конвертер
-    @Value("${timeLimit.hour}")
-    private int LIMIT_HOUR;
-
-    @Value("${timeLimit.min}")
-    private int LIMIT_MIN;
-
-    @Value("#{T(java.time.LocalTime).parse('${my.time}')}")
-    private LocalTime time;
-
-    private final TimeConfig timeConfig;
     public final static String REST_URL = "/api/votes";
     private final RestaurantRepository restaurantRepository;
     private final VoteRepository repository;
@@ -87,7 +78,7 @@ public class VoteController {
     @PostMapping(value = "")
     public ResponseEntity<Vote> createWithLocation(@RequestParam @NotNull @Min(1) Integer restaurantId) {
         log.info("create vote for restaurant {}", restaurantId);
-        checkCurrentTime(LocalTime.of(LIMIT_HOUR,LIMIT_MIN));
+        checkCurrentTime(timeLimit);
         Vote newVote = new Vote(
                 null,
                 LocalDate.now(),
@@ -111,7 +102,7 @@ public class VoteController {
     @Transactional
     public void update(@RequestParam Integer restaurantId, @PathVariable Integer id) {
         log.info("update vote for restaurant {}", restaurantId);
-        checkCurrentTime(LocalTime.of(LIMIT_HOUR,LIMIT_MIN));
+        checkCurrentTime(timeLimit);
         Vote vote = repository
                 .getByIdWithUser(id)
                 .orElseThrow(() -> new NotFoundException("Entity Vote with id= " + id + " not found"));

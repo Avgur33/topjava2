@@ -1,11 +1,7 @@
 #  https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
-my:
-  time: '11:00:00'
+
 limittime:
-  time: 11:00:00
-timeLimit:
-  hour: 11
-  min: 00
+  time: '11:00'
 spring:
   jpa:
     show-sql: true
