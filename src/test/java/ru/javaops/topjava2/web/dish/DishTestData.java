@@ -30,11 +30,9 @@ public class DishTestData extends AbstractTestData {
     public static final Dish dish17 = new Dish(DISH1_ID + 16, "chicken 2", 800, LocalDate.now());
     public static final Dish dish18 = new Dish(DISH1_ID + 17, "chicken 3", 900, LocalDate.now());
 
-
-
-
-    public static final List<Dish> DISHES = List.of(dish1, dish2, dish3, dish4, dish5, dish6, dish7, dish8, dish9);
-    public static final List<Dish> dishesOfRestaurant1 = List.of(dish1, dish2, dish3,dish10,dish11,dish12);
+    public static final List<Dish> DISHES = List.of(dish10,dish11,dish12);
+    public static final List<Dish> todayDishesOfRestaurant1 = List.of(dish10,dish11,dish12);
+    public static final List<Dish> allDishesOfRestaurant1 = List.of(dish1, dish2, dish3,dish10,dish11,dish12);
 
     public static Dish getNew() {
         return new Dish(null, "New Dish", 1000, LocalDate.now());

@@ -16,7 +16,6 @@ import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
-import ru.javaops.topjava2.to.DishTo;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -25,7 +24,6 @@ import java.util.List;
 
 import static ru.javaops.topjava2.util.DateUtil.endDateUtil;
 import static ru.javaops.topjava2.util.DateUtil.startDateUtil;
-import static ru.javaops.topjava2.util.DishUtil.getTos;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
@@ -43,11 +41,11 @@ public class DishController {
             description = "get dishes between startDate and endDate"
     )
     @GetMapping(value = "/history")
-    public List<DishTo> getHistory(
+    public List<Dish> getHistory(
             @PathVariable Integer restaurantId,
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return getTos(repository.getHistory(restaurantId, startDateUtil(startDate) , endDateUtil(endDate)));
+        return repository.getHistory(restaurantId, startDateUtil(startDate) , endDateUtil(endDate));
     }
 
     @Operation(

@@ -248,7 +248,7 @@ class DishControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHER.contentJson(dishesOfRestaurant1));
+                .andExpect(MATCHER.contentJson(todayDishesOfRestaurant1));
     }
 
     @Test
@@ -259,7 +259,7 @@ class DishControllerTest extends AbstractControllerTest {
                 .param("endDate",""))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHER.contentJson(dishesOfRestaurant1));
+                .andExpect(MATCHER.contentJson(allDishesOfRestaurant1));
     }
 
     @Test
