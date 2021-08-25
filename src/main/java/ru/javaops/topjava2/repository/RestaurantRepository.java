@@ -12,4 +12,9 @@ public interface RestaurantRepository extends BaseRepository<Restaurant>{
     @EntityGraph(attributePaths = {"votes"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT r FROM Restaurant r")
     List<Restaurant> getAllWithVotes();
+
+    @EntityGraph(attributePaths = {"votes"}, type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT r FROM Restaurant r JOIN FETCH r.votes ")
+    List<Restaurant> getRestaurantsWithVotes();
+
 }

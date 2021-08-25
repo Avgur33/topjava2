@@ -21,7 +21,7 @@ public abstract class BaseEntity implements Persistable<Integer>, HasId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "Identificator")
+    @Schema(description = "ID for new entity must be null", example = "null")
     protected Integer id;
 
     // doesn't work for hibernate lazy proxy

@@ -35,13 +35,13 @@ public class ValidationUtil {
 
     public static void checkCurrentTime(LocalTime time){
         if (LocalTime.now().isAfter(time)) {
-            throw new LateTimeException("Voting ended at {}" + time + "o'clock");
+            throw new LateTimeException("Voting ended at " + time + " o'clock");
         }
     }
 
     public static void checkCurrentDate(LocalDate ld){
         if (LocalDate.now().compareTo(ld) !=0 ) {
-            throw new LateTimeException("Vote can only be changed for today");
+            throw new LateTimeException("Entity can only be changed for today");
         }
     }
 

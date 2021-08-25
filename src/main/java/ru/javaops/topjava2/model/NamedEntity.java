@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public abstract class NamedEntity extends BaseEntity {
     @NotBlank
     @Size(min = 2, max = 100)
     @Column(name = "name", nullable = false)
+    @Schema(description = "name", example = "newName")
     protected String name;
 
     protected NamedEntity(Integer id, String name) {

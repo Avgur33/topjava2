@@ -3,6 +3,7 @@ package ru.javaops.topjava2.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ public class Restaurant extends NamedEntity {
     @Column(name = "location", nullable = false)
     @NotBlank
     @Size(min = 5, max = 100)
+    @Schema(description = "name", example = "Moscow City")
     private String location;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")

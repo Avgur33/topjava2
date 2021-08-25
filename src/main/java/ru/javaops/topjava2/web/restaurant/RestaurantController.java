@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -42,6 +43,7 @@ public class RestaurantController {
             parameters = {
                     @Parameter(name = "id",
                             description = "The id of restaurant that needs to be fetched. Use 1 for testing.",
+                            content = @Content(examples = {@ExampleObject(value = "1")}),
                             required = true)
             },
             responses = {

@@ -1,6 +1,10 @@
 package ru.javaops.topjava2.web.user;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -24,6 +28,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @RestController
 @RequestMapping(value = AdminUserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@Tag(name = "AdminUserController", description = "Controller for manipulating with User. Only for Admin.")
 // TODO: cache only most requested data!
 @CacheConfig(cacheNames = "users")
 public class AdminUserController extends AbstractUserController {
@@ -31,7 +36,13 @@ public class AdminUserController extends AbstractUserController {
     static final String REST_URL = "/api/admin/users";
 
     @Operation(
-            summary = "Get user"
+            summary = "Get user by id",
+            parameters = {
+                    @Parameter(name = "id",
+                            description = "The id of User that needs to be fetched. Use 1 for testing.",
+                            content = @Content(examples = {@ExampleObject(value = "1")}),
+                            required = true)
+            }
     )
     @Override
     @GetMapping("/{id}")
@@ -40,7 +51,13 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @Operation(
-            summary = "Delete user"
+            summary = "Delete user by id",
+            parameters = {
+            @Parameter(name = "id",
+                    description = "The id of User that needs to be deleted. Use 1 for testing.",
+                    content = @Content(examples = {@ExampleObject(value = "1")}),
+                    required = true)
+    }
     )
     @Override
     @DeleteMapping("/{id}")
@@ -64,6 +81,7 @@ public class AdminUserController extends AbstractUserController {
             summary = "Create user"
     )
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     @CacheEvict(allEntries = true)
     public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user) {
         log.info("create {}", user);
@@ -76,7 +94,13 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @Operation(
-            summary = "Update user"
+            summary = "Update user",
+            parameters = {
+            @Parameter(name = "id",
+                    description = "The id of User that needs to be updated. Use 1 for testing.",
+                    content = @Content(examples = {@ExampleObject(value = "1")}),
+                    required = true)
+    }
     )
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -88,7 +112,13 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @Operation(
-            summary = "Get user by email"
+            summary = "Get user by email",
+            parameters = {
+            @Parameter(name = "email",
+                    description = "The email of User that needs to be fetched.",
+                    content = @Content(examples = {@ExampleObject(value = "admin@gmail.com")}),
+                    required = true)
+    }
     )
     @GetMapping("/by")
     public ResponseEntity<User> getByEmail(@RequestParam String email) {
@@ -97,7 +127,17 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @Operation(
-            summary = "Set enable or disable status for user"
+            summary = "Set enable or disable status for user",
+            parameters = {
+                    @Parameter(name = "id",
+                            description = "The id of User that needs to be updated. Use 1 for testing.",
+                            content = @Content(examples = {@ExampleObject(value = "1")}),
+                            required = true),
+                    @Parameter(name = "enabled",
+                    description = "enable or disable status for user",
+                    content = @Content(examples = {@ExampleObject(value = "true")}),
+                    required = true)
+    }
     )
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

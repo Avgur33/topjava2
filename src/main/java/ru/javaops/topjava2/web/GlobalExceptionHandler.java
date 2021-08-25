@@ -87,7 +87,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> typeMismatchException(WebRequest request, MethodArgumentTypeMismatchException ex) {
         log.error("IllegalArgumentException ", ex);
-        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.defaults(), "Invalid data format of" + ex.getName()), HttpStatus.BAD_REQUEST);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.defaults(), "Invalid data format of " + ex.getName()), HttpStatus.BAD_REQUEST);
     }
     //422
     @ExceptionHandler(DataIntegrityViolationException.class)

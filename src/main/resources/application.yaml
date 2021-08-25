@@ -1,7 +1,9 @@
 #  https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 
-limittime:
-  time: '11:00'
+limit-time:
+  vote: '23:00'
+  dish: '23:00'
+
 spring:
   jpa:
     show-sql: true

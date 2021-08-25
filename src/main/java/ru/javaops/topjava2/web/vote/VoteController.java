@@ -37,7 +37,7 @@ public class VoteController {
         this.restaurantRepository = restaurantRepository;
         this.repository = repository;
     }
-    @Value("${limittime.time}")
+    @Value("${limit-time.vote}")
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     private LocalTime timeLimit;
 

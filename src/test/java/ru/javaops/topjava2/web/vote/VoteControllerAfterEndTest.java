@@ -14,8 +14,7 @@ import static ru.javaops.topjava2.web.AbstractTestData.*;
 import static ru.javaops.topjava2.web.vote.VoteTestData.VOTE3_ID;
 
 @TestPropertySource(properties = {
-        "timeLimit.hour=00",
-        "timeLimit.min=01"
+        "limit-time.vote='00:01"
 })
 public class VoteControllerAfterEndTest extends AbstractVoteControllerTest {
 

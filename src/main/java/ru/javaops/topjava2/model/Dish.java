@@ -24,6 +24,7 @@ public class Dish extends NamedEntity {
     @Column(name = "price", nullable = false)
     @NotNull
     @Range(min = 10)
+    @Schema(description = "min = 10", example = "100")
     private Integer price;
 
     @Column(name = "for_date", nullable = false, columnDefinition = "date default now()")

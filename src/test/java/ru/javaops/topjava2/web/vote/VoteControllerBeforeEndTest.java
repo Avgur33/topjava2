@@ -24,8 +24,7 @@ import static ru.javaops.topjava2.web.vote.VoteTestData.*;
 
 //https://www.baeldung.com/spring-tests-override-properties
 @TestPropertySource(properties = {
-        "timeLimit.hour=23",
-        "timeLimit.min=59"
+        "limit-time.vote='23:59"
 })
 
 class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {

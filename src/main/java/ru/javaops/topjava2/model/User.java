@@ -31,6 +31,7 @@ public class User extends NamedEntity implements HasIdAndEmail {
     @Email
     @NotBlank
     @Size(max = 100)
+    @Schema(example = "newmail@gmail.com")
     private String email;
 
     @Column(name = "password", nullable = false)
@@ -38,9 +39,11 @@ public class User extends NamedEntity implements HasIdAndEmail {
     @Size(min = 5, max = 100)
     // https://stackoverflow.com/a/12505165/548473
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Schema(example = "12345")
     private String password;
 
     @Column(name = "enabled", nullable = false, columnDefinition = "bool default true")
+    @Schema(description = "users status", example = "true")
     private boolean enabled = true;
 
     @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()")
