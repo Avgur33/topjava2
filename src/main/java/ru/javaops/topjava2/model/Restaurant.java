@@ -35,22 +35,21 @@ public class Restaurant extends NamedEntity {
     private List<Vote> votes;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
-    //@OrderBy("price DESC")
-    @JsonManagedReference(value = "restaurant-dish")
+    @JsonManagedReference(value = "restaurant-menu")
     @Hidden
     @ToString.Exclude
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Dish> dishes;
+    private List<Menu> menus;
 
     public Restaurant(Restaurant r) {
-        this(r.getId(), r.getName(), r.getLocation(), r.getVotes(), r.getDishes());
+        this(r.getId(), r.getName(), r.getLocation(), r.getVotes(), r.getMenus());
     }
 
-    public Restaurant(Integer id, String name, String location, List<Vote> votes, List<Dish> dishes) {
+    public Restaurant(Integer id, String name, String location, List<Vote> votes, List<Menu> menus) {
         super(id, name);
         this.location = location;
         this.votes = votes;
-        this.dishes = dishes;
+        this.menus = menus;
     }
 
     public Restaurant(Integer id, String name, String location) {

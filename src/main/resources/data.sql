@@ -10,11 +10,42 @@ VALUES ('USER', 1),
        ('USER', 3);
 
 INSERT INTO restaurant (name, location)
-VALUES ('Burger King','Moscow'),
-       ('Pho Bo','Moscow'),
-       ('KFC','Moscow');
+VALUES ('Burger King','Moscow'), --1
+       ('Pho Bo','Moscow'),      --2
+       ('KFC','Moscow');         --3
 
-INSERT INTO dish (name, price, for_date, restaurant_id)
+INSERT INTO dish (name, price)
+VALUES ('burger 1','100'),
+       ('burger 2','200'),
+       ('burger 3','300'),
+       ('pho bo 1','400'),
+       ('pho bo 2','500'),
+       ('pho bo 3','600'),
+       ('chicken 1','700'),
+       ('chicken 2','800'),
+       ('chicken 3','900'),
+       ('burger 10','100'),
+       ('burger 20','200'),
+       ('burger 30','300'),
+       ('pho bo 10','400'),
+       ('pho bo 20','500'),
+       ('pho bo 30','600'),
+       ('chicken 10','700'),
+       ('chicken 20','800'),
+       ('chicken 30','900');
+
+INSERT INTO menu (for_date, restaurant_id, dish_id)
+        (now(), 1, 1),
+        (now(), 1, 2),
+        (now(), 1, 3),
+        (now(), 2, 4),
+        (now(), 2, 5),
+        (now(), 2, 6),
+        (now(), 3, 7),
+        (now(), 3, 8),
+        (now(), 3, 9);
+
+/*INSERT INTO dish (name, price, for_date, restaurant_id)
 VALUES ('burger 1','100',  now()-INTERVAL 1 DAY,1),
        ('burger 2','200',  now()-INTERVAL 1 DAY,1),
        ('burger 3','300',  now()-INTERVAL 1 DAY,1),
@@ -32,7 +63,7 @@ VALUES ('burger 1','100',  now()-INTERVAL 1 DAY,1),
        ('pho bo 3','600',  now(),2),
        ('chicken 1','700', now(),3),
        ('chicken 2','800', now(),3),
-       ('chicken 3','900', now(),3);
+       ('chicken 3','900', now(),3);*/
 
 INSERT INTO vote (user_id, restaurant_id, reg_date)
 VALUES (1, 1, now()-INTERVAL 1 DAY),
