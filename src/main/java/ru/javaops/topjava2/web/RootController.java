@@ -9,23 +9,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.error.NotFoundException;
-import ru.javaops.topjava2.model.Menu;
-import ru.javaops.topjava2.model.Restaurant;
-import ru.javaops.topjava2.model.RestaurantC;
-import ru.javaops.topjava2.model.Vote;
+import ru.javaops.topjava2.model.*;
 import ru.javaops.topjava2.repository.MenuRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.to.MenuTo;
+import ru.javaops.topjava2.to.RestaurantTo;
+import ru.javaops.topjava2.util.RestaurantUtil;
 
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ru.javaops.topjava2.util.MenuUtil.getTos;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkCurrentTime;
@@ -61,14 +61,13 @@ public class RootController {
         return ResponseEntity.ok(getTos(menuList));
     }
 
-    @Transactional
     @GetMapping("/result")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<RestaurantC>> getResult() {
+    public ResponseEntity<List<RestaurantTo>> getResult() {
         log.info("get Result for today");
-
-        List<RestaurantC> resultList = voteRepository.getResultVotes();
-        return ResponseEntity.ok(resultList);
+        List<Vote> resultList = voteRepository.getVotesResult();
+        Map<Restaurant,Long> map = resultList.stream().collect(Collectors.groupingBy(Vote::getRestaurant, Collectors.counting()));
+        return ResponseEntity.ok(map.entrySet().stream().map(e-> RestaurantUtil.createTo(e.getKey(),e.getValue().intValue())).toList());
     }
 
     //проголосовать

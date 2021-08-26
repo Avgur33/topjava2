@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
 public class RestaurantUtil {
     public static List<RestaurantTo> getTos(Collection<Restaurant> restaurants) {
         return restaurants.stream()
-                .map(r->createTo(r, (int) r
+                .map(r -> createTo(r, (int) r
                         .getVotes()
                         .stream()
-                        .filter(v->v.getRegDate().compareTo(LocalDate.now()) == 0)
+                        .filter(v -> v.getRegDate().compareTo(LocalDate.now()) == 0)
                         .count()))
                 .toList();
-
+    }
         /*        return restaurants.stream()
                 .map(r->createToWith(r, r
                         .getVotes()
@@ -27,7 +27,7 @@ public class RestaurantUtil {
                         .filter(v->v.getRegDate().compareTo(LocalDate.now()) == 0)
                         .collect(Collectors.groupingBy(Vote::getRegDate, Collectors.counting()))))
                 .toList();*/
-    }
+
 
 /*    public static List<RestaurantTo> getTosHistory(Collection<Restaurant> restaurants,LocalDate startDate, LocalDate endDate){
         return restaurants.stream()
@@ -45,5 +45,9 @@ public class RestaurantUtil {
 
     public static RestaurantTo createTo(Restaurant rest, int votes) {
         return new RestaurantTo(rest.getId(),rest.getName(), rest.getLocation(), votes);
+    }
+
+    public static RestaurantTo createITo(Integer restaurantId, String name, String location, int intValue) {
+        return new RestaurantTo(restaurantId,name, location, intValue);
     }
 }

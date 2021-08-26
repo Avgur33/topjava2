@@ -122,12 +122,12 @@ public class VoteController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<VoteTo> getAll() {
         log.info("Vote getAll");
-        return getTos(repository.getAllWithUserAndRestaurant());
+        return getTos(repository.getVotesResult());
     }
 
 
     @Operation(
-            summary = "Get current vote for Authenticated user",
+            summary = "Get",
             description = "Get all votes with user name and restaurant name only for Admin"
     )
 
@@ -135,7 +135,7 @@ public class VoteController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<VoteTo> getAllHistory() {
         log.info("Vote getAll");
-        return getTos(repository.getAllWithUserAndRestaurant());
+        return getTos(repository.getVotesResult());
     }
 
 }

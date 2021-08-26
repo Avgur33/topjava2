@@ -18,7 +18,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true)
 public class Menu extends BaseEntity {
 
     @Column(name = "for_date", nullable = false, columnDefinition = "date default now()")
