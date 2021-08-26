@@ -1,8 +1,6 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -36,11 +34,15 @@ public class Menu extends BaseEntity {
     @Hidden
     private Restaurant restaurant;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JsonManagedReference(value = "menu-dish")
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     @Hidden
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Dish> dishes;
 
+    public Menu(Integer id, LocalDate forDate, Restaurant restaurant, List<Dish> dishes) {
+        super(id);
+        this.forDate = forDate;
+        this.restaurant = restaurant;
+        this.dishes = dishes;
+    }
 }

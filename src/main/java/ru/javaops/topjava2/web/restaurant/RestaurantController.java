@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -36,7 +35,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @AllArgsConstructor
 public class RestaurantController {
     private final RestaurantRepository repository;
-    public final static String REST_URL = "/api/restaurants";
+    public final static String REST_URL = "/api/admin/restaurants";
 
     @Operation(
             summary = "Get restaurant by restaurant id",
@@ -75,6 +74,7 @@ public class RestaurantController {
             parameters = {
                     @Parameter(name = "id",
                             description = "The id of restaurant that needs to be deleted. Use 1 for testing.",
+                            content = @Content(examples = {@ExampleObject(value = "1")}),
                             required = true)
             },
             responses = {
@@ -90,7 +90,6 @@ public class RestaurantController {
             })
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void delete(@PathVariable int id) {
         log.info("Restaurant delete {}", id);
         repository.deleteExisted(id);
@@ -113,7 +112,6 @@ public class RestaurantController {
                                     schema = @Schema(implementation = ErrorInfo.class)))
             })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Restaurant> creatWithLocation(@RequestBody @Valid Restaurant rest) {
         log.info("create {}", rest);
         checkNew(rest);
@@ -127,10 +125,15 @@ public class RestaurantController {
     @Operation(
             summary = "Update restaurant",
             description = "Only for Admin",
+            parameters = {
+                    @Parameter(name = "id",
+                            description = "The id of restaurant that needs to be deleted. Use 1 for testing.",
+                            content = @Content(examples = {@ExampleObject(value = "1")}),
+                            required = true)
+            },
             responses = {
                     @ApiResponse(responseCode = "204", description = "Update the restaurant",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Restaurant.class))),
+                            content = @Content()),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
                     @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content()),
                     @ApiResponse(responseCode = "400", description = "Bad Request",
@@ -144,7 +147,7 @@ public class RestaurantController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public void update(@RequestBody @Valid Restaurant rest, @PathVariable int id) {
         log.info("update {} with id={}", rest, id);
         assureIdConsistent(rest, id);

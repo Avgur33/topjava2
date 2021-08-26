@@ -7,14 +7,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,33 +23,25 @@ import ru.javaops.topjava2.repository.RestaurantRepository;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javaops.topjava2.util.DateUtil.endDateUtil;
-import static ru.javaops.topjava2.util.DateUtil.startDateUtil;
-import static ru.javaops.topjava2.util.validation.ValidationUtil.*;
+import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
+import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
 @RestController
 @RequestMapping(value = DishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-
+@AllArgsConstructor
 public class DishController {
     private final DishRepository repository;
     private final RestaurantRepository restaurantRepository;
-    public final static String REST_URL = "/api/restaurants/{restaurantId}/dishes";
+    public final static String REST_URL = "/api/admin/restaurants/{restaurantId}/dishes";
 
-    @Value("${limit-time.dish}")
+    /*@Value("${limit-time.dish}")
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-    private LocalTime timeLimit;
+    private LocalTime timeLimit;*/
 
-    public DishController(DishRepository repository, RestaurantRepository restaurantRepository) {
-        this.repository = repository;
-        this.restaurantRepository = restaurantRepository;
-    }
-
-    @Operation(
+/*    @Operation(
             summary = "Get all dishes for restaurant",
             description = "get dishes between startDate and endDate",
             parameters = {
@@ -84,8 +73,8 @@ public class DishController {
             @PathVariable Integer restaurantId,
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return repository.getHistory(restaurantId, startDateUtil(startDate), endDateUtil(endDate));
-    }
+        return null;
+    }*/
 
     @Operation(
             summary = "Delete dish with ID",
@@ -111,12 +100,13 @@ public class DishController {
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void delete(@PathVariable Integer restaurantId, @PathVariable Integer id) {
 
-        //ToDo проверка на соответствие ресторана блюду
-        //ToDo проверка на время и дату удаления сущности
         log.info("Restaurant delete {}", id);
+        Dish dish = repository
+                .findByIdWithRestaurant(id)
+                .orElseThrow(() -> new NotFoundException(" Entity Dish with id = " + id + " not found"));
+        assureIdConsistent(dish.getRestaurant(), restaurantId);
         repository.deleteExisted(id);
     }
 
@@ -136,8 +126,9 @@ public class DishController {
             }
     )
     @GetMapping()
-    public List<Dish> getAllForToday(@PathVariable int restaurantId) {
+    public List<Dish> getAll(@PathVariable int restaurantId) {
         //ToDo валидация Id ресторана (такого ресторана нет)
+
         log.info("get dishes for restaurant {}", restaurantId);
         return repository.getDishesByRestaurantId(restaurantId);
     }
@@ -172,7 +163,7 @@ public class DishController {
         log.info("get dish by ID for restaurant {}", restaurantId);
         Dish dish = repository
                 .findByIdWithRestaurant(id)
-                .orElseThrow(() -> new NotFoundException("Dish with id=" + id + "dont belong for restaurant with id" + restaurantId));
+                .orElseThrow(() -> new NotFoundException(" Entity Dish with id = " + id + " not found"));
         assureIdConsistent(dish.getRestaurant(), restaurantId);
         return ResponseEntity.ok(dish);
     }
@@ -204,16 +195,11 @@ public class DishController {
             }
     )
 
-    //ToDo поставить запрет на создание еды после 11 или 10 часов
-    //ToDo добавить тест на создание еды после 11 или 10 часов
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional
     public ResponseEntity<Dish> creatWithLocation(@PathVariable int restaurantId, @Valid @RequestBody Dish dish) {
         log.info("create {}", dish);
-        checkCurrentTime(timeLimit);
         checkNew(dish);
-        dish.setForDate(LocalDate.now());
         dish.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow(() ->
                 new NotFoundException("Restaurant with id=" + restaurantId + " not found")));
         Dish created = repository.save(dish);
@@ -237,9 +223,8 @@ public class DishController {
                             required = true)
             },
             responses = {
-                    @ApiResponse(responseCode = "201", description = "Created dish for the restaurant",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Dish.class))),
+                    @ApiResponse(responseCode = "204", description = "Created dish for the restaurant",
+                            content = @Content()),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
                     @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content()),
                     @ApiResponse(responseCode = "400", description = "Bad Request",
@@ -254,7 +239,6 @@ public class DishController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void update(@PathVariable int restaurantId, @PathVariable int id, @Valid @RequestBody Dish dish) {
         log.info("update {} with id={}", dish, id);
         assureIdConsistent(dish, id);

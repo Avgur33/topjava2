@@ -36,11 +36,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String EXCEPTION_DUPLICATE_VOTE = "exception.vote.duplicate";
     public static final String EXCEPTION_DUPLICATE_RESTAURANT = "exception.restaurant.duplicate";
     public static final String EXCEPTION_DUPLICATE_DISH = "exception.dish.duplicate";
+    public static final String EXCEPTION_DUPLICATE_MENU = "exception.menu.duplicate";
+
 
     private static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
             "vote_unique_reg_date_user_id_idx", EXCEPTION_DUPLICATE_VOTE,
             "restaurant_unique_name_location_idx", EXCEPTION_DUPLICATE_RESTAURANT,
-            "dish_unique_name_date_restaurant_idx", EXCEPTION_DUPLICATE_DISH);
+            "dish_unique_name_date_restaurant_idx", EXCEPTION_DUPLICATE_DISH,
+            "menu_unique_for_date_restaurant_id_idx", EXCEPTION_DUPLICATE_MENU
+    );
+
 
     private final ErrorAttributes errorAttributes;
 
@@ -63,6 +68,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> appException(WebRequest request, AppException ex) {
         log.error("ApplicationException", ex);
         return createResponseEntity(getDefaultBody(request, ex.getOptions(), null), ex.getStatus());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> argumentException(WebRequest request, IllegalArgumentException ex) {
+        log.error("ApplicationException", ex);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.defaults(), ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     //422

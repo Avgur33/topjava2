@@ -27,7 +27,7 @@ import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.rest1;
 
 class DishControllerTest extends AbstractControllerTest {
 
-    private static final String REST_URL = "/api/restaurants/";
+    private static final String REST_URL = "/api/admin/restaurants/";
 
     @Autowired
     RestaurantRepository restaurantRepository;
@@ -37,10 +37,12 @@ class DishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void createDuplicate() throws Exception {
-        Dish newDish = new Dish(null,dish11.getName(),dish11.getPrice(),dish11.getForDate());
+        Dish duplicateDish = new Dish(dish1);
+        duplicateDish.setId(null);
+        duplicateDish.setRestaurant(rest1);
         perform(MockMvcRequestBuilders.post(REST_URL + REST1_ID + "/dishes")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(writeValue(newDish)))
+                .content(writeValue(duplicateDish)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(containsString(GlobalExceptionHandler.EXCEPTION_DUPLICATE_DISH)));
@@ -142,9 +144,8 @@ class DishControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NEVER)
     void updateDuplicate() throws Exception {
         Dish updated = getUpdated();
-        updated.setId(DISH10_ID);
-        updated.setName(dish11.getName());
-        updated.setForDate(dish11.getForDate());
+        updated.setId(DISH1_ID);
+        updated.setName(dish1.getName());
         updated.setRestaurant(rest1);
         perform(MockMvcRequestBuilders.put(REST_URL + REST1_ID + "/dishes/" + DISH10_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -231,7 +232,7 @@ class DishControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NEVER)
     @WithUserDetails(value = ADMIN_MAIL)
     void createNotFoundRestaurant() throws Exception {
-        Dish newDish = new Dish(null,dish10.getName(),dish10.getPrice(),dish1.getForDate());
+        Dish newDish = getNew();
         perform(MockMvcRequestBuilders.post(REST_URL + NOT_FOUND + "/dishes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(newDish)))
@@ -248,7 +249,7 @@ class DishControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHER.contentJson(todayDishesOfRestaurant1));
+                .andExpect(MATCHER.contentJson(allDishesOfRestaurant1));
     }
 
     @Test
