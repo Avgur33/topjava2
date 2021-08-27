@@ -5,7 +5,7 @@ import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 
 public abstract class AbstractVoteControllerTest  extends AbstractControllerTest {
-    protected static final String REST_URL = VoteController.REST_URL + '/';
+    protected static final String REST_URL = RootController.REST_URL + '/';
     @Autowired
     protected VoteRepository voteRepository;
 }

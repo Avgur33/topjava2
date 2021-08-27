@@ -1,4 +1,4 @@
-package ru.javaops.topjava2.web;
+package ru.javaops.topjava2.web.vote;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,6 +29,7 @@ import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.to.VoteTo;
 import ru.javaops.topjava2.util.RestaurantUtil;
 import ru.javaops.topjava2.util.VoteUtil;
+import ru.javaops.topjava2.web.AuthUser;
 
 import java.net.URI;
 import java.time.LocalDate;
