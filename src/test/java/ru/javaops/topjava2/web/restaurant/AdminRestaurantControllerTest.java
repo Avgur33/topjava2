@@ -22,9 +22,9 @@ import static ru.javaops.topjava2.util.JsonUtil.writeValue;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
 import static ru.javaops.topjava2.web.user.UserTestData.NOT_FOUND;
 
-class RestaurantControllerTest extends AbstractControllerTest {
+class AdminRestaurantControllerTest extends AbstractControllerTest {
 
-    private static final String REST_URL = RestaurantController.REST_URL + '/';
+    private static final String REST_URL = AdminRestaurantController.REST_URL + '/';
 
     @Autowired
     private RestaurantRepository restaurantRepository;

@@ -40,8 +40,8 @@ public class ValidationUtil {
     }
 
     public static void checkCurrentDate(LocalDate ld){
-        if (LocalDate.now().compareTo(ld) !=0 ) {
-            throw new LateTimeException("Entity can only be changed for today");
+        if (LocalDate.now().compareTo(ld) > 0 ) {
+            throw new LateTimeException("You can't change old menu");
         }
     }
 

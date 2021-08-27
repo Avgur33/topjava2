@@ -25,7 +25,7 @@ import static ru.javaops.topjava2.util.JsonUtil.writeValue;
 import static ru.javaops.topjava2.web.dish.DishTestData.*;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.rest1;
 
-class DishControllerTest extends AbstractControllerTest {
+class AdminDishControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL = "/api/admin/restaurants/";
 

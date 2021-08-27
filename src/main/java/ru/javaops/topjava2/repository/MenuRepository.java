@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaops.topjava2.model.Menu;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,9 @@ public interface MenuRepository  extends BaseRepository<Menu>{
     @Query("SELECT m FROM Menu m WHERE m.forDate=current_date")
     List<Menu> getToday(Pageable pageable);
 
-    @Query("SELECT m FROM Menu m WHERE m.restaurant.id=:restaurantId")
-    List<Menu> findAllByRestaurant(Integer restaurantId);
+    @Query("SELECT m FROM Menu m WHERE m.restaurant.id=:restaurantId AND m.forDate >=:startDate AND m.forDate <=:endDate")
+    List<Menu> findAllByRestaurant(Integer restaurantId, LocalDate startDate, LocalDate endDate);
+
+    @Query("SELECT m FROM Menu m WHERE m.restaurant.id=:restaurantId AND m.forDate=current_date")
+    Optional<Menu> findByRestaurantId(Integer restaurantId);
 }

@@ -19,7 +19,7 @@ public class VoteUtil {
                 .toList();
     }
     public static VoteTo createTo(Vote vote) {
-        return new VoteTo(vote.getId(),vote.getRegDate(),vote.getUser().getName(),vote.getRestaurant().getName());
+        return new VoteTo(vote.getId(),vote.getRegDate(), vote.getRegTime(), vote.getRestaurant().getName(),vote.getRestaurant().getLocation());
     }
 }
 

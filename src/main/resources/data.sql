@@ -39,16 +39,16 @@ VALUES  (now()-INTERVAL 1 DAY, 1),
         (now()-INTERVAL 1 DAY, 2),
         (now()-INTERVAL 1 DAY, 3),
         (now(), 1),
-        (now(), 2),
-        (now(), 3);
+        (now(), 2);
+        /*(now(), 3);*/
 
 INSERT INTO menu_dishes (menu_id, dishes_id)
 VALUES  (1, 1), (1, 2), (1,3),
         (2, 4), (2, 5), (2,6),
         (3, 7), (3, 8), (3,9),
         (4, 1), (4, 2), (4,3),
-        (5, 4), (5, 5), (5,6),
-        (6, 7), (6, 8), (6,9);
+        (5, 4), (5, 5), (5,6);
+        /*(6, 7), (6, 8), (6,9);*/
 
 
 /*INSERT INTO dish (name, price, for_date, restaurant_id)
@@ -71,8 +71,8 @@ VALUES ('burger 1','100',  now()-INTERVAL 1 DAY,1),
        ('chicken 2','800', now(),3),
        ('chicken 3','900', now(),3);*/
 
-INSERT INTO vote (user_id, restaurant_id, reg_date)
-VALUES (1, 1, now()-INTERVAL 1 DAY),
-       (2, 2, now()-INTERVAL 1 DAY),
-       (1, 1, now()),
-       (2, 2, now());
+INSERT INTO vote (user_id, restaurant_id, reg_date, reg_time)
+VALUES (1, 1, now()-INTERVAL 1 DAY, current_time),
+       (2, 2, now()-INTERVAL 1 DAY, current_time ),
+       (1, 1, now(),current_time),
+       (2, 2, now(),current_time);

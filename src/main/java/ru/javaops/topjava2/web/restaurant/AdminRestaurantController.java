@@ -30,10 +30,10 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsist
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
 @RestController
-@RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
-public class RestaurantController {
+public class AdminRestaurantController {
     private final RestaurantRepository repository;
     public final static String REST_URL = "/api/admin/restaurants";
 
@@ -169,16 +169,4 @@ public class RestaurantController {
         log.info("Restaurant getAll");
         return getTos(repository.getAllWithVotes());
     }
-
-/*    @Operation(
-            summary = "получаем рестораны с историей голосований",
-            description = ""
-    )
-    @GetMapping("/history")
-    public List<RestaurantTo> getAllHistory(
-            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        log.info("Restaurant getAllHistory");
-        return getTosHistory(repository.getAllWithVotes(),startDateUtil(startDate) , endDateUtil(endDate));
-    }*/
 }

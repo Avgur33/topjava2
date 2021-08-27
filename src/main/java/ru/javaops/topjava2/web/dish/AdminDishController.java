@@ -29,56 +29,17 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsist
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
 @RestController
-@RequestMapping(value = DishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = AdminDishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
-public class DishController {
+public class AdminDishController {
     private final DishRepository repository;
     private final RestaurantRepository restaurantRepository;
     public final static String REST_URL = "/api/admin/restaurants/{restaurantId}/dishes";
 
-    /*@Value("${limit-time.dish}")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-    private LocalTime timeLimit;*/
-
-/*    @Operation(
-            summary = "Get all dishes for restaurant",
-            description = "get dishes between startDate and endDate",
-            parameters = {
-                    @Parameter(name = "restaurantId",
-                            description = "The id of restaurant. Use 1 for testing.",
-                            content = @Content(examples = {@ExampleObject(value = "1")}),
-                            required = true),
-                    @Parameter(name = "startDate",
-                            description = "Start date. Format yyyy-MM-dd.",
-                            content = @Content(examples = {@ExampleObject(value = "2020-02-21")}),
-                            required = false),
-                    @Parameter(name = "endDate",
-                            description = "End date. Format yyyy-MM-dd.",
-                            content = @Content(examples = {@ExampleObject(value = "2022-02-21")}),
-                            required = false)
-            },
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Dishes for the restaurant",
-                            content = @Content(mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = Dish.class)))),
-                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
-                    @ApiResponse(responseCode = "400", description = "Bad Request",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorInfo.class)))
-            }
-    )
-    @GetMapping(value = "/history")
-    public List<Dish> getHistory(
-            @PathVariable Integer restaurantId,
-            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return null;
-    }*/
-
     @Operation(
             summary = "Delete dish with ID",
-            description = "Only for Admin",
+            description = "",
             parameters = {
                     @Parameter(name = "restaurantId",
                             description = "The id of restaurant. Use 1 for testing.",
@@ -111,7 +72,7 @@ public class DishController {
     }
 
     @Operation(
-            summary = "Get dishes for restaurant for the current date",
+            summary = "Get dishes for restaurant",
             parameters = {
                     @Parameter(name = "restaurantId",
                             description = "The id of restaurant. Use 1 for testing.",
@@ -121,8 +82,7 @@ public class DishController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "The dishes",
                             content = @Content(mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = Dish.class)))),
-                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+                                    array = @ArraySchema(schema = @Schema(implementation = Dish.class))))
             }
     )
     @GetMapping()
@@ -169,8 +129,8 @@ public class DishController {
     }
 
     @Operation(
-            summary = "Create dish for restaurant for today",
-            description = "Only for Admin",
+            summary = "Create dish for restaurant",
+            description = "",
             parameters = {
                     @Parameter(name = "restaurantId",
                             description = "The id of restaurant. Use 1 for testing.",
@@ -211,7 +171,7 @@ public class DishController {
 
     @Operation(
             summary = "Update dish",
-            description = "Only for Admin",
+            description = "",
             parameters = {
                     @Parameter(name = "restaurantId",
                             description = "The id of restaurant. Use 1 for testing.",

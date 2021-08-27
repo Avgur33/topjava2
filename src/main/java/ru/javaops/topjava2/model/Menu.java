@@ -35,7 +35,7 @@ public class Menu extends BaseEntity {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
-    @Hidden
+    //@Hidden
     private List<Dish> dishes;
 
     public Menu(Integer id, LocalDate forDate, Restaurant restaurant, List<Dish> dishes) {
