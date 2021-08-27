@@ -14,8 +14,6 @@ import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 import ru.javaops.topjava2.web.GlobalExceptionHandler;
 
-import java.time.LocalDate;
-
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -37,7 +35,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void createDuplicate() throws Exception {
-        Dish duplicateDish = new Dish(dish1);
+        Dish duplicateDish = new Dish(dish2);
         duplicateDish.setId(null);
         duplicateDish.setRestaurant(rest1);
         perform(MockMvcRequestBuilders.post(REST_URL + REST1_ID + "/dishes")
@@ -49,18 +47,18 @@ class AdminDishControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = ADMIN_MAIL)
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes/" + DISH1_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes/" + DISH2_ID))
                 .andExpect(status().isOk())
                 .andDo(print())
                 // https://jira.spring.io/browse/SPR-14472
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHER.contentJson(dish1));
+                .andExpect(MATCHER.contentJson(dish2));
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = ADMIN_MAIL)
     void getInvalid() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + (REST1_ID + 1) + "/dishes/" + DISH1_ID))
                 .andDo(print())
@@ -69,7 +67,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = ADMIN_MAIL)
     void getNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes/" + NOT_FOUND))
                 .andDo(print())
@@ -85,7 +83,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + REST1_ID + "/dishes/" + DISH10_ID))
+        perform(MockMvcRequestBuilders.delete(REST_URL + REST1_ID + "/dishes/" + DISH1_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertFalse(dishRepository.findById(DISH10_ID).isPresent());
@@ -119,12 +117,12 @@ class AdminDishControllerTest extends AbstractControllerTest {
     void update() throws Exception {
         Dish updated = getUpdated();
         updated.setId(null);
-        perform(MockMvcRequestBuilders.put(REST_URL + REST1_ID + "/dishes/" + DISH10_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL + REST1_ID + "/dishes/" + DISH1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        MATCHER.assertMatch(dishRepository.findById(DISH10_ID).orElseThrow(), getUpdated());
+        MATCHER.assertMatch(dishRepository.findById(DISH1_ID).orElseThrow(), getUpdated());
     }
 
     @Test
@@ -144,10 +142,11 @@ class AdminDishControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NEVER)
     void updateDuplicate() throws Exception {
         Dish updated = getUpdated();
-        updated.setId(DISH1_ID);
+        updated.setId(DISH2_ID);
         updated.setName(dish1.getName());
+        updated.setPrice(dish1.getPrice());
         updated.setRestaurant(rest1);
-        perform(MockMvcRequestBuilders.put(REST_URL + REST1_ID + "/dishes/" + DISH10_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL + REST1_ID + "/dishes/" + DISH2_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(updated)))
                 .andDo(print())
@@ -183,7 +182,8 @@ class AdminDishControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
     }
-   //ToDo create after 11 o'clock
+
+    //ToDo create after 11 o'clock
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void createWithLocation() throws Exception {
@@ -227,7 +227,6 @@ class AdminDishControllerTest extends AbstractControllerTest {
     }
 
 
-
     @Test
     @Transactional(propagation = Propagation.NEVER)
     @WithUserDetails(value = ADMIN_MAIL)
@@ -240,11 +239,8 @@ class AdminDishControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnprocessableEntity());
     }
 
-
-
-
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = ADMIN_MAIL)
     void getAll() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes"))
                 .andExpect(status().isOk())
@@ -252,43 +248,4 @@ class AdminDishControllerTest extends AbstractControllerTest {
                 .andExpect(MATCHER.contentJson(allDishesOfRestaurant1));
     }
 
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void getHistory() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes/history")
-                .param("startDate","")
-                .param("endDate",""))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHER.contentJson(allDishesOfRestaurant1));
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void getHistoryYesterday() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes/history")
-                .param("startDate", LocalDate.now().minusDays(1).toString())
-                .param("endDate",LocalDate.now().minusDays(1).toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHER.contentJson(dish1,dish2,dish3));
-    }
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void getHistoryEmpty() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/dishes/history")
-                .param("startDate", LocalDate.now().minusDays(10).toString())
-                .param("endDate",LocalDate.now().minusDays(9).toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-    }
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void getHistoryNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND + "/dishes/history")
-                .param("startDate", LocalDate.now().minusDays(10).toString())
-                .param("endDate",LocalDate.now().minusDays(9).toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-    }
 }

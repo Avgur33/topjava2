@@ -9,6 +9,7 @@ public abstract  class AbstractTestData{
     public static final int REST1_ID = 1;
     public static final int REST2_ID = 2;
     public static final int DISH1_ID = 1;
+    public static final int DISH2_ID = 2;
     public static final int VOTE1_ID = 1;
     public static final int DISH10_ID = 10;
 

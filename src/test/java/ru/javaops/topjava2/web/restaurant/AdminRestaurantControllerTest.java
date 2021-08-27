@@ -30,7 +30,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     private RestaurantRepository restaurantRepository;
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = ADMIN_MAIL)
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID))
                 .andExpect(status().isOk())
@@ -41,7 +41,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = ADMIN_MAIL)
     void getNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND))
                 .andDo(print())
@@ -183,7 +183,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = ADMIN_MAIL)
     void getAll() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())

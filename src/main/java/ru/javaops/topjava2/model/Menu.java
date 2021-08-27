@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name="menu", uniqueConstraints = {@UniqueConstraint(
+@Table(name = "menu", uniqueConstraints = {@UniqueConstraint(
         columnNames = {"for_date", "restaurant_id"}, name = "menu_unique_for_date_restaurant_id_idx")})
 @Getter
 @Setter
@@ -21,7 +21,7 @@ import java.util.List;
 public class Menu extends BaseEntity {
 
     @Column(name = "for_date", nullable = false, columnDefinition = "date default now()")
-    @Schema(description = "For this date", example = "2020-02-20",format = "yyyy-MM-dd")
+    @Schema(description = "For this date", example = "2020-02-20", format = "yyyy-MM-dd")
     @NotNull
     private LocalDate forDate;
 

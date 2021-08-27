@@ -37,5 +37,5 @@ public class DishTestData extends AbstractTestData {
     public static Dish getNew() {
         return new Dish(null, "New Dish", 1000, null);
     }
-    public static Dish getUpdated(){return new Dish(DISH10_ID, "Updated Dish", 1000, null);}
+    public static Dish getUpdated(){return new Dish(DISH1_ID, "Updated Dish", 1000, null);}
 }
