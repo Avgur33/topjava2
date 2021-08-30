@@ -4,10 +4,7 @@ import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.web.AbstractTestData;
 import ru.javaops.topjava2.web.MatcherFactory;
 
-import java.time.LocalDate;
 import java.util.List;
-
-import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.rest1;
 
 public class DishTestData extends AbstractTestData {
 

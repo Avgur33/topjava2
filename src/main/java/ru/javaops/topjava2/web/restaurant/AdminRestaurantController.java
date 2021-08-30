@@ -161,7 +161,6 @@ public class AdminRestaurantController {
     //https://stackoverflow.com/questions/60002234/how-to-annotate-array-of-objects-response-in-swagger
     @Operation(
             summary = "Get all restaurants with number of votes for today",
-            description = "",
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of restaurantTo",
                             content = @Content(mediaType = "application/json",

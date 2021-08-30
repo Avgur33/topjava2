@@ -138,12 +138,10 @@ public class RootController {
             parameters = {
                     @Parameter(name = "startDate",
                             description = "Start date. Format yyyy-MM-dd.",
-                            content = @Content(examples = {@ExampleObject(value = "2020-02-21")}),
-                            required = false),
+                            content = @Content(examples = {@ExampleObject(value = "2020-02-21")})),
                     @Parameter(name = "endDate",
                             description = "End date. Format yyyy-MM-dd.",
-                            content = @Content(examples = {@ExampleObject(value = "2022-02-21")}),
-                            required = false)
+                            content = @Content(examples = {@ExampleObject(value = "2022-02-21")}))
             }
     )
     @GetMapping("/vote/user/history")

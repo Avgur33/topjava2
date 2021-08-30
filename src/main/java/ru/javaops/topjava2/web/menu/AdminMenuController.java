@@ -52,8 +52,7 @@ public class AdminMenuController {
                             required = true),
                     @Parameter(name = "forDate",
                             description = "For date. Format yyyy-MM-dd.",
-                            content = @Content(examples = {@ExampleObject(value = "2022-02-21")}),
-                            required = false)
+                            content = @Content(examples = {@ExampleObject(value = "2022-02-21")}))
             }
     )
     @PostMapping()
@@ -84,7 +83,6 @@ public class AdminMenuController {
 
     @Operation(
             summary = "Delete menu for the restaurant",
-            description = "",
             parameters = {
                     @Parameter(name = "restaurantId",
                             description = "The id of restaurant. Use 2 for testing.",
@@ -110,7 +108,6 @@ public class AdminMenuController {
 
     @Operation(
             summary = "Get menu for the restaurant",
-            description = "",
             parameters = {
                     @Parameter(name = "restaurantId",
                             description = "The id of restaurant. Use 1 for testing.",
@@ -135,7 +132,6 @@ public class AdminMenuController {
 
     @Operation(
             summary = "Get menu for the restaurant for today by restaurantId",
-            description = "",
             parameters = {
                     @Parameter(name = "restaurantId",
                             description = "The id of restaurant. Use 1 for testing.",
@@ -164,12 +160,10 @@ public class AdminMenuController {
                             required = true),
                     @Parameter(name = "startDate",
                             description = "Start date. Format yyyy-MM-dd.",
-                            content = @Content(examples = {@ExampleObject(value = "2020-02-21")}),
-                            required = false),
+                            content = @Content(examples = {@ExampleObject(value = "2020-02-21")})),
                     @Parameter(name = "endDate",
                             description = "End date. Format yyyy-MM-dd.",
-                            content = @Content(examples = {@ExampleObject(value = "2022-02-21")}),
-                            required = false)
+                            content = @Content(examples = {@ExampleObject(value = "2022-02-21")}))
             }
     )
     @GetMapping()

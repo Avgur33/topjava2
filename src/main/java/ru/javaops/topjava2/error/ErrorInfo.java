@@ -1,7 +1,6 @@
 package ru.javaops.topjava2.error;
 
 import lombok.Getter;
-import lombok.ToString;
 
 import java.beans.ConstructorProperties;
 import java.util.Date;

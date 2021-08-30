@@ -39,7 +39,6 @@ public class AdminDishController {
 
     @Operation(
             summary = "Delete dish with ID",
-            description = "",
             parameters = {
                     @Parameter(name = "restaurantId",
                             description = "The id of restaurant. Use 1 for testing.",
@@ -130,7 +129,6 @@ public class AdminDishController {
 
     @Operation(
             summary = "Create dish for restaurant",
-            description = "",
             parameters = {
                     @Parameter(name = "restaurantId",
                             description = "The id of restaurant. Use 1 for testing.",
@@ -171,7 +169,6 @@ public class AdminDishController {
 
     @Operation(
             summary = "Update dish",
-            description = "",
             parameters = {
                     @Parameter(name = "restaurantId",
                             description = "The id of restaurant. Use 1 for testing.",

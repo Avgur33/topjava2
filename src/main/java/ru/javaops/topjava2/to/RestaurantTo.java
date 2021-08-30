@@ -1,6 +1,5 @@
 package ru.javaops.topjava2.to;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
@@ -10,8 +9,6 @@ import ru.javaops.topjava2.HasId;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.util.Map;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
@@ -26,19 +23,12 @@ public class RestaurantTo extends NamedTo implements HasId {
     @Range(min = 0, max = Integer.MAX_VALUE)
     Integer votes;
 
-    //@NotNull
-    //Map<LocalDate, Long> votesHistory;
+
 
     public RestaurantTo(Integer id, String name, String location, Integer votes) {
         super(id, name);
         this.location = location;
         this.votes = votes;
-        //this.votesHistory = null;
     }
-    /*public RestaurantTo(Integer id, String name, String location, Integer votes, Map<LocalDate, Long> votesHistory) {
-        super(id, name);
-        this.location = location;
-        this.votes = votes;
-        this.votesHistory = votesHistory;
-    }*/
+
 }

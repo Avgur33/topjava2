@@ -1,14 +1,11 @@
 package ru.javaops.topjava2.util;
 
 import ru.javaops.topjava2.model.Restaurant;
-import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.to.RestaurantTo;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RestaurantUtil {
     public static List<RestaurantTo> getTos(Collection<Restaurant> restaurants) {

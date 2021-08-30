@@ -217,7 +217,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = USER_MAIL)
     void createWithLocationByUser() throws Exception {
         Dish newDish = getNew();
-        newDish.setName("fdsf");
+        newDish.setName("name");
         perform(MockMvcRequestBuilders.post(REST_URL + REST1_ID + "/dishes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(newDish)))

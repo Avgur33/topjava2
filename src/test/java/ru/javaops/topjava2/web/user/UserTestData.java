@@ -26,7 +26,7 @@ public class UserTestData extends AbstractTestData {
         return new User(USER_ID, "UpdatedName", USER_MAIL, "newPass", false, new Date(), Collections.singleton(Role.ADMIN));
     }
 
-    public static String jsonWithPassword(User user, String passw) {
-        return JsonUtil.writeAdditionProps(user, "password", passw);
+    public static String jsonWithPassword(User user, String pass) {
+        return JsonUtil.writeAdditionProps(user, "password", pass);
     }
 }
