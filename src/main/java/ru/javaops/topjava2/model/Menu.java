@@ -10,6 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,10 +34,13 @@ public class Menu extends BaseEntity {
     @Hidden
     private Restaurant restaurant;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @JoinTable(name = "menu_dishes",
+            joinColumns = @JoinColumn(name = "menu_id"),
+            inverseJoinColumns = @JoinColumn(name = "dishes_id"))
     @ToString.Exclude
     //@Hidden
-    private List<Dish> dishes;
+    private List<Dish> dishes = new ArrayList<>();
 
     public Menu(Integer id, LocalDate forDate, Restaurant restaurant, List<Dish> dishes) {
         super(id);

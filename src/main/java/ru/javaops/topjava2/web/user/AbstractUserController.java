@@ -27,7 +27,7 @@ public abstract class AbstractUserController {
 
     public ResponseEntity<User> get(int id) {
         log.info("get {}", id);
-        return ResponseEntity.ok(repository.findById(id).orElseThrow(()->new NotFoundException("Entity with id=" + id + " not found")));
+        return ResponseEntity.ok(repository.findById(id).orElseThrow(()->new NotFoundException("Entity User with id=" + id + " not found")));
     }
 
     @CacheEvict(value = "users", allEntries = true)

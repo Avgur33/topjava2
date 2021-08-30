@@ -59,7 +59,6 @@ public class AdminMenuController {
     @PostMapping()
     @Transactional
     @ResponseStatus(HttpStatus.CREATED)
-    //ToDo добавить дату для меню
     public ResponseEntity<Menu> creatWithLocation(@PathVariable int restaurantId, @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate forDate, @RequestParam List<Integer> dishes) {
         log.info("create menu for the Restaurant id = {}", restaurantId);
         if ((dishes.size() < 2) || (dishes.size() > 5)) {

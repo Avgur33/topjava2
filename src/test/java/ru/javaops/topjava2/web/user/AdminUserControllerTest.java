@@ -45,8 +45,6 @@ class AdminUserControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
-        //ToDo посмотреть возвращаемую ошибку
-                //.andExpect(status().isNotFound());
     }
 
     @Test

@@ -11,7 +11,7 @@ import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.rest1;
 
 public class DishTestData extends AbstractTestData {
 
-    public static final MatcherFactory.Matcher<Dish> MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Dish.class,  "restaurant");
+    public static final MatcherFactory.Matcher<Dish> MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Dish.class,  "restaurant","menus");
 
     public static final Dish dish1 = new Dish(DISH1_ID + 0, "burger 1", 100, null);
     public static final Dish dish2 = new Dish(DISH1_ID + 1, "burger 2", 200, null);

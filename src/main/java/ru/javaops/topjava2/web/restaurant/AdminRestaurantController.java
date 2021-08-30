@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.error.ErrorInfo;
 import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Restaurant;
+import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.RestaurantTo;
 
@@ -35,6 +36,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @AllArgsConstructor
 public class AdminRestaurantController {
     private final RestaurantRepository repository;
+    private final DishRepository dishRepository;
     public final static String REST_URL = "/api/admin/restaurants";
 
     @Operation(
@@ -90,8 +92,11 @@ public class AdminRestaurantController {
             })
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     public void delete(@PathVariable int id) {
         log.info("Restaurant delete {}", id);
+
+        dishRepository.deleteByRestaurantId(id);
         repository.deleteExisted(id);
     }
 

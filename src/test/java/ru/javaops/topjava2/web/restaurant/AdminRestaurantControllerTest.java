@@ -46,16 +46,13 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
-        //ToDo посмотреть возвращаемую ошибку
-        //.andExpect(status().isNotFound());
     }
+
     @Test
     void getUnAuth() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isUnauthorized());
     }
-
-    //ToDo check on delete cascade
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)

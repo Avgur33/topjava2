@@ -31,15 +31,22 @@ public class Restaurant extends NamedEntity {
     @JsonManagedReference(value = "restaurant-vote")
     @Hidden
     @ToString.Exclude
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Vote> votes;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @JsonManagedReference(value = "restaurant-menu")
     @Hidden
     @ToString.Exclude
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Menu> menus;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
+    @JsonManagedReference(value = "restaurant-dish")
+    @Hidden
+    @ToString.Exclude
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<Dish> dishes;
 
     public Restaurant(Restaurant r) {
         this(r.getId(), r.getName(), r.getLocation(), r.getVotes(), r.getMenus());
