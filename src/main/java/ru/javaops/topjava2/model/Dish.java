@@ -1,6 +1,7 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -35,19 +36,6 @@ public class Dish extends NamedEntity {
     @Hidden
     //@NotNull
     private Restaurant restaurant;
-
-    //https://stackoverflow.com/questions/15155587/hibernate-bidirectional-manytomany-delete-issue
-    /*@ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.DETACH})
-    @JoinTable(name = "menu_dishes",
-            joinColumns = @JoinColumn(name = "dishes_id"),
-            inverseJoinColumns = @JoinColumn(name = "menu_id"))
-    @JsonBackReference(value = "menu-dish")*/
-    @ManyToMany(mappedBy = "dishes")
-    @ToString.Exclude
-    @Hidden
-    private List<Menu> menus;
-
-
 
     public Dish(Dish d) {
         this(d.getId(),d.getName(),d.getPrice(),d.getRestaurant());

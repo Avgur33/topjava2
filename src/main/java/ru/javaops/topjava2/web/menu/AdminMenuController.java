@@ -58,18 +58,25 @@ public class AdminMenuController {
     @PostMapping()
     @Transactional
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Menu> creatWithLocation(@PathVariable int restaurantId, @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate forDate, @RequestParam List<Integer> dishes) {
+    public ResponseEntity<Menu> creatWithLocation(@PathVariable int restaurantId,
+                                                  @RequestParam @Nullable
+                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate forDate,
+                                                  @RequestParam List<Integer> dishes) {
         log.info("create menu for the Restaurant id = {}", restaurantId);
         if ((dishes.size() < 2) || (dishes.size() > 5)) {
             throw new NotFoundException("Wrong dishes number");
         }
+
         if (forDate!=null) {checkCurrentDate(forDate);}
 
         Restaurant rest = restaurantRepository
                 .findById(restaurantId)
                 .orElseThrow(() -> new NotFoundException("Restaurant with id=" + restaurantId + " not found"));
+
         List<Dish> dishList = dishes.stream()
-                .map(id -> dishRepository.findById(id).orElseThrow(() -> new NotFoundException("Dish with id=" + id + " not found")))
+                .map(id -> dishRepository
+                        .findById(id)
+                        .orElseThrow(() -> new NotFoundException("Dish with id=" + id + " not found")))
                 .toList();
 
         Menu menu = new Menu(null, forDate==null? LocalDate.now():forDate, rest, dishList);
@@ -142,7 +149,7 @@ public class AdminMenuController {
 
     @GetMapping("/by")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Menu> get(@PathVariable Integer restaurantId) {
+    public ResponseEntity<Menu> getBy(@PathVariable Integer restaurantId) {
         log.info("get Menu by ID for restaurant {}", restaurantId);
         Menu menu = menuRepository
                 .findByRestaurantId(restaurantId)
@@ -177,7 +184,7 @@ public class AdminMenuController {
     }
 
     @Operation(
-            summary = "Update menu for the restaurant",
+            summary = "Patch menu for the restaurant",
             description = "You can update menu only for today. For test use 1,2,3 ids for dishes." +
                     "Number of dishes must be between 2 and 5. Dish must be in db.",
             parameters = {
@@ -192,7 +199,7 @@ public class AdminMenuController {
             }
     )
 
-    @PutMapping(value = "/{id}")
+    @PatchMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
     public void update(@PathVariable int restaurantId, @PathVariable int id, @RequestParam List<Integer> dishes) {
@@ -200,45 +207,20 @@ public class AdminMenuController {
         if ((dishes.size() < 2) || (dishes.size() > 5)) {
             throw new NotFoundException("Wrong dishes number");
         }
-        Menu menu = menuRepository.getById(id);
+
+        Menu menu = menuRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException("Menu with id=" + id + " not found"));
+
         checkCurrentDate(menu.getForDate());
         assureIdConsistent(menu.getRestaurant(), restaurantId);
+
         List<Dish> dishList = dishes.stream()
-                .map(i -> dishRepository.findById(i).orElseThrow(() -> new NotFoundException("Dish with id=" + i + " not found")))
+                .map(i -> dishRepository
+                        .findById(i)
+                        .orElseThrow(() -> new NotFoundException("Dish with id=" + i + " not found")))
                 .toList();
 
         menu.setDishes(dishList);
-    }
-
-    @Operation(
-            summary = "Add dishes to menu",
-            description = "You can update menu only for today. Dish must be in db." +
-                    "Total number of dishes must be between 2 and 5",
-            parameters = {
-                    @Parameter(name = "restaurantId",
-                            description = "The id of restaurant. Use 1 for testing.",
-                            content = @Content(examples = {@ExampleObject(value = "1")}),
-                            required = true),
-                    @Parameter(name = "id",
-                            description = "The id of menu which needs to be updated. Use 4 for testing.",
-                            content = @Content(examples = {@ExampleObject(value = "4")}),
-                            required = true)
-            }
-    )
-    @PatchMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Transactional
-    public void addDishes(@PathVariable int restaurantId, @PathVariable int id, @RequestParam List<Integer> dishes) {
-        log.info("patch Menu with id={}", id);
-        Menu menu = menuRepository.getById(id);
-        checkCurrentDate(menu.getForDate());
-        assureIdConsistent(menu.getRestaurant(), restaurantId);
-        if ((menu.getDishes().size() + dishes.size()) > 5) {
-            throw new NotFoundException("Too many dishes");
-        }
-        List<Dish> dishList = dishes.stream()
-                .map(i -> dishRepository.findById(i).orElseThrow(() -> new NotFoundException("Dish with id=" + i + " not found")))
-                .toList();
-        menu.getDishes().addAll(dishList);
     }
 }

@@ -28,12 +28,13 @@ public class Menu extends BaseEntity {
 
     @JoinColumn(name = "restaurant_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference(value = "restaurant-menu")
     @ToString.Exclude
     @Hidden
     private Restaurant restaurant;
 
+    //https://stackoverflow.com/questions/15155587/hibernate-bidirectional-manytomany-delete-issue
     @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
     @JoinTable(name = "menu_dishes",
             joinColumns = @JoinColumn(name = "menu_id"),

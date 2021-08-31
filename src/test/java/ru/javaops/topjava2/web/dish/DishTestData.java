@@ -19,8 +19,8 @@ public class DishTestData extends AbstractTestData {
     public static final Dish dish7 = new Dish(DISH1_ID + 6, "chicken 1", 700, null);
     public static final Dish dish8 = new Dish(DISH1_ID + 7, "chicken 2", 800, null);
     public static final Dish dish9 = new Dish(DISH1_ID + 8, "chicken 3", 900, null);
-    /*public static final Dish dish10 = new Dish(DISH10_ID + 0, "burger 1", 100, LocalDate.now());
-    public static final Dish dish11 = new Dish(DISH1_ID + 10, "burger 2", 200, LocalDate.now());
+    public static final Dish dish10 = new Dish(DISH10_ID + 0, "burger 1", 100, null);
+    /*public static final Dish dish11 = new Dish(DISH1_ID + 10, "burger 2", 200, LocalDate.now());
     public static final Dish dish12 = new Dish(DISH1_ID + 11, "burger 3", 300, LocalDate.now());
     public static final Dish dish13 = new Dish(DISH1_ID + 12, "pho bo 1", 400, LocalDate.now());
     public static final Dish dish14 = new Dish(DISH1_ID + 13, "pho bo 2", 500, LocalDate.now());

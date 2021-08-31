@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,6 +25,7 @@ import static ru.javaops.topjava2.util.JsonUtil.writeValue;
 import static ru.javaops.topjava2.web.dish.DishTestData.*;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.rest1;
 
+//@Sql(scripts = "classpath:data.sql", config = @SqlConfig(encoding = "UTF-8"))
 class AdminDishControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL = "/api/admin/restaurants/";
@@ -82,12 +85,22 @@ class AdminDishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
+    @Transactional(propagation = Propagation.NEVER)
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + REST1_ID + "/dishes/" + DISH1_ID))
+        perform(MockMvcRequestBuilders.delete(REST_URL + REST1_ID + "/dishes/" + DISH10_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertFalse(dishRepository.findById(DISH10_ID).isPresent());
     }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void deleteInvalidOrder() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + REST1_ID + "/dishes/" + DISH1_ID))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
@@ -99,7 +112,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
-    void deleteByUSer() throws Exception {
+    void deleteForbidden() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + REST1_ID + "/dishes/" + DISH10_ID))
                 .andDo(print())
                 .andExpect(status().isForbidden());
@@ -127,7 +140,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
-    void updateByUser() throws Exception {
+    void updateForbidden() throws Exception {
         Dish updated = getUpdated();
         updated.setId(null);
         perform(MockMvcRequestBuilders.put(REST_URL + REST1_ID + "/dishes/" + DISH10_ID)
@@ -139,7 +152,6 @@ class AdminDishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
-    @Transactional(propagation = Propagation.NEVER)
     void updateDuplicate() throws Exception {
         Dish updated = getUpdated();
         updated.setId(DISH2_ID);
@@ -156,7 +168,6 @@ class AdminDishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
-    @Transactional(propagation = Propagation.NEVER)
     void updateInvalid() throws Exception {
         Dish updated = getUpdated();
         updated.setId(DISH10_ID);
@@ -215,7 +226,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
-    void createWithLocationByUser() throws Exception {
+    void createWithLocationForbidden() throws Exception {
         Dish newDish = getNew();
         newDish.setName("name");
         perform(MockMvcRequestBuilders.post(REST_URL + REST1_ID + "/dishes")

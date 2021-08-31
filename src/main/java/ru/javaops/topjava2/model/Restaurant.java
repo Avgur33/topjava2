@@ -1,6 +1,7 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -30,14 +31,14 @@ public class Restaurant extends NamedEntity {
     @JsonManagedReference(value = "restaurant-vote")
     @Hidden
     @ToString.Exclude
-    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Vote> votes;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @JsonManagedReference(value = "restaurant-menu")
     @Hidden
     @ToString.Exclude
-    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Menu> menus;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
@@ -45,7 +46,7 @@ public class Restaurant extends NamedEntity {
     @Hidden
     @ToString.Exclude
     //ToDo init dishes
-    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Dish> dishes;
 
     public Restaurant(Restaurant r) {

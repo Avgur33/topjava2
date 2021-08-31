@@ -37,15 +37,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String EXCEPTION_DUPLICATE_RESTAURANT = "exception.restaurant.duplicate";
     public static final String EXCEPTION_DUPLICATE_DISH = "exception.dish.duplicate";
     public static final String EXCEPTION_DUPLICATE_MENU = "exception.menu.duplicate";
-
+    public static final String EXCEPTION_REMOVAL_ORDER = "exception.dish delete menu first";
 
     private static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
             "vote_unique_reg_date_user_id_idx", EXCEPTION_DUPLICATE_VOTE,
             "restaurant_unique_name_location_idx", EXCEPTION_DUPLICATE_RESTAURANT,
             "dish_unique_name_restaurant_idx", EXCEPTION_DUPLICATE_DISH,
-            "menu_unique_for_date_restaurant_id_idx", EXCEPTION_DUPLICATE_MENU
+            "menu_unique_for_date_restaurant_id_idx", EXCEPTION_DUPLICATE_MENU,
+            "public.menu_dishes foreign key(dishes_id)", EXCEPTION_REMOVAL_ORDER
     );
-
 
     private final ErrorAttributes errorAttributes;
 
