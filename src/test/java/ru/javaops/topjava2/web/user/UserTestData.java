@@ -14,7 +14,7 @@ public class UserTestData extends AbstractTestData {
 
     public static final int USER_ID = 1;
     public static final int ADMIN_ID = 2;
-    public static final User user1 = new User(USER_ID, "User", USER_MAIL, "password", Role.USER);
+    public static final User user1 = new User(USER_ID, "User", USER1_MAIL, "password", Role.USER);
     public static final User admin = new User(ADMIN_ID, "Admin", ADMIN_MAIL, "admin", Role.ADMIN, Role.USER);
     public static final User user2 = new User(3, "User2", "user2@yandex.ru", "admin", Role.USER);
 
@@ -23,7 +23,7 @@ public class UserTestData extends AbstractTestData {
     }
 
     public static User getUpdated() {
-        return new User(USER_ID, "UpdatedName", USER_MAIL, "newPass", false, new Date(), Collections.singleton(Role.ADMIN));
+        return new User(USER_ID, "UpdatedName", USER1_MAIL, "newPass", false, new Date(), Collections.singleton(Role.ADMIN));
     }
 
     public static String jsonWithPassword(User user, String pass) {

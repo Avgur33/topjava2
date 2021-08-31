@@ -24,13 +24,13 @@ import static ru.javaops.topjava2.web.vote.VoteTestData.*;
 
 //https://www.baeldung.com/spring-tests-override-properties
 @TestPropertySource(properties = {
-        "limit-time.vote='23:59"
+        "limit-time.vote=23:59"
 })
 
 class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void get() throws Exception {
         perform(MockMvcRequestBuilders
                 .get(REST_URL + VOTE1_ID))
@@ -41,7 +41,7 @@ class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void getNotFound() throws Exception {
         perform(MockMvcRequestBuilders
                 .get(REST_URL + NOT_FOUND))
@@ -50,7 +50,7 @@ class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void getNotOwn() throws Exception {
         perform(MockMvcRequestBuilders
                 .get(REST_URL + (VOTE1_ID + 1)))
@@ -66,7 +66,7 @@ class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void update() throws Exception {
             Vote updated = getUpdated();
             updated.setId(null);
@@ -82,7 +82,7 @@ class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void updateNotOwn() throws Exception {
         perform(MockMvcRequestBuilders
                 .patch(REST_URL + (VOTE1_ID + 3))
@@ -92,7 +92,7 @@ class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void updateNotToday() throws Exception {
         perform(MockMvcRequestBuilders
                 .patch(REST_URL + VOTE1_ID)
@@ -102,7 +102,7 @@ class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void updateNotFoundVote() throws Exception {
         perform(MockMvcRequestBuilders
                 .patch(REST_URL + NOT_FOUND)
@@ -113,7 +113,7 @@ class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void updateNotFoundRestaurant() throws Exception {
         perform(MockMvcRequestBuilders
                 .patch(REST_URL + VOTE3_ID)
@@ -133,7 +133,7 @@ class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void getAllByUser() throws Exception {
         perform(MockMvcRequestBuilders
                 .get(REST_URL))
@@ -181,7 +181,7 @@ class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void createDuplicate() throws Exception {
         perform(MockMvcRequestBuilders
                 .post(REST_URL)
@@ -194,7 +194,7 @@ class VoteControllerBeforeEndTest extends AbstractVoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void createNotFoundRestaurant() throws Exception {
         perform(MockMvcRequestBuilders
                 .post(REST_URL)

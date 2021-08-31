@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
@@ -111,7 +109,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void deleteForbidden() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + REST1_ID + "/dishes/" + DISH10_ID))
                 .andDo(print())
@@ -139,7 +137,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void updateForbidden() throws Exception {
         Dish updated = getUpdated();
         updated.setId(null);
@@ -196,6 +194,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
+    @Transactional
     void createWithLocation() throws Exception {
         Dish newDish = getNew();
         ResultActions action = perform(MockMvcRequestBuilders
@@ -225,7 +224,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void createWithLocationForbidden() throws Exception {
         Dish newDish = getNew();
         newDish.setName("name");

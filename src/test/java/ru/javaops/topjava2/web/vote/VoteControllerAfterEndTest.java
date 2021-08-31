@@ -17,7 +17,7 @@ import static ru.javaops.topjava2.web.vote.VoteTestData.VOTE3_ID;
 public class VoteControllerAfterEndTest extends AbstractVoteControllerTest {
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void createLate() throws Exception {
         perform(MockMvcRequestBuilders
                 .post(REST_URL)
@@ -28,7 +28,7 @@ public class VoteControllerAfterEndTest extends AbstractVoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void updateLate() throws Exception {
             perform(MockMvcRequestBuilders
                     .patch(REST_URL + VOTE3_ID)

@@ -27,7 +27,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     private UserRepository userRepository;
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
@@ -42,7 +42,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL))
                 .andExpect(status().isNoContent());
@@ -67,9 +67,9 @@ class ProfileControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void update() throws Exception {
-        UserTo updatedTo = new UserTo(null, "newName", USER_MAIL, "newPassword");
+        UserTo updatedTo = new UserTo(null, "newName", USER1_MAIL, "newPassword");
         perform(MockMvcRequestBuilders.put(REST_URL).contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updatedTo)))
                 .andDo(print())
@@ -89,7 +89,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void updateInvalid() throws Exception {
         UserTo updatedTo = new UserTo(null, null, "password", null);
         perform(MockMvcRequestBuilders.put(REST_URL)
@@ -100,7 +100,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void updateDuplicate() throws Exception {
         UserTo updatedTo = new UserTo(null, "newName", ADMIN_MAIL, "newPassword");
         perform(MockMvcRequestBuilders.put(REST_URL).contentType(MediaType.APPLICATION_JSON)

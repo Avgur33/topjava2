@@ -72,7 +72,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void deleteByUser() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + REST1_ID))
                 .andDo(print())
@@ -93,7 +93,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void updateByUser() throws Exception {
         Restaurant updated = getUpdated();
         updated.setId(null);
@@ -158,7 +158,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void createWithLocationByUser() throws Exception {
         Restaurant newRestaurant = getNew();
         perform(MockMvcRequestBuilders.post(REST_URL)

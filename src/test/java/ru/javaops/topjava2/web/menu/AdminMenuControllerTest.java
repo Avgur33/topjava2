@@ -56,7 +56,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void deleteForbidden() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + REST1_ID + "/menu/" + MENU1_ID))
                 .andDo(print())
@@ -168,7 +168,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void getForbidden() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + REST2_ID + "/menu/" + MENU2_ID))
                 .andDo(print())
@@ -198,7 +198,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void getAllForBidden() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + REST2_ID + "/menu/" )
                 .param("startDate","")
@@ -218,7 +218,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = USER1_MAIL)
     void updateForbidden() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL + REST2_ID + "/menu/" + MENU5_ID)
                 .param("dishes","4","5")
