@@ -1,8 +1,7 @@
 #  https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 
 limit-time:
-  vote: '23:00'
-  dish: '23:00'
+  vote: '11:00'
 
 spring:
   jpa:

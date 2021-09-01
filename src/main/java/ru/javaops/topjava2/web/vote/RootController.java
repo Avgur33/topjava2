@@ -181,7 +181,7 @@ public class RootController {
         return ResponseEntity.ok(map.entrySet().stream().map(e -> RestaurantUtil.createTo(e.getKey(), e.getValue().intValue(),null)).toList());
     }
 
-    @Operation(summary = "Get users history of voting",
+    @Operation(summary = "Get history of voting",
             parameters = {
                     @Parameter(name = "startDate",
                             description = "Start date. Format yyyy-MM-dd.",
