@@ -87,17 +87,6 @@ public class RootController {
         return ResponseEntity.ok(getTos(menuList));
     }
 
-    @Operation(summary = "Get voting result")
-    @GetMapping("/vote/result")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<RestaurantTo>> getResult() {
-        log.info("get Result for today");
-        List<Vote> resultList = voteRepository.getVotesResult();
-        Map<Restaurant, Long> map = resultList.stream().collect(Collectors.groupingBy(Vote::getRestaurant, Collectors.counting()));
-        return ResponseEntity.ok(map.entrySet().stream().map(e -> RestaurantUtil.createTo(e.getKey(), e.getValue().intValue())).toList());
-    }
-
-
     @Operation(summary = "Create vote for authenticated user",
             parameters = {
                     @Parameter(name = "restaurantId",
@@ -181,4 +170,47 @@ public class RootController {
             voteRepository.save(new Vote(null, LocalDate.now(), user.getUser(), restaurant));
         }
     }
+
+    @Operation(summary = "Get voting result for today")
+    @GetMapping("/vote/result")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<RestaurantTo>> getResult() {
+        log.info("get Result for today");
+        List<Vote> resultList = voteRepository.getResult();
+        Map<Restaurant, Long> map = resultList.stream().collect(Collectors.groupingBy(Vote::getRestaurant, Collectors.counting()));
+        return ResponseEntity.ok(map.entrySet().stream().map(e -> RestaurantUtil.createTo(e.getKey(), e.getValue().intValue(),null)).toList());
+    }
+
+    @Operation(summary = "Get users history of voting",
+            parameters = {
+                    @Parameter(name = "startDate",
+                            description = "Start date. Format yyyy-MM-dd.",
+                            content = @Content(examples = {@ExampleObject(value = "2020-02-21")})),
+                    @Parameter(name = "endDate",
+                            description = "End date. Format yyyy-MM-dd.",
+                            content = @Content(examples = {@ExampleObject(value = "2022-02-21")}))
+            }
+    )
+    @GetMapping("/vote/result/history")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<RestaurantTo>> getResultHistory(
+            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        log.info("get history result");
+
+        List<Vote> resultList = voteRepository.getResultHistory(startDateUtil(startDate),endDateUtil(endDate));
+
+        Map<Restaurant, Map<LocalDate,Long>> history = resultList.stream().collect(Collectors.groupingBy(Vote::getRestaurant,
+                Collectors.groupingBy(Vote::getRegDate,Collectors.counting())));
+
+        return ResponseEntity.ok(history.entrySet().stream().map(e->RestaurantUtil.createTo(e.getKey(),e.getValue().get(LocalDate.now()).intValue(),e.getValue())).toList());
+    }
+
+
+
+
+
+
+
+
 }

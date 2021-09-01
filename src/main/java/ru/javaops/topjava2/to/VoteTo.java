@@ -24,7 +24,6 @@ public class VoteTo  extends BaseTo implements HasId {
 
     @NotNull
     @DateTimeFormat(iso=DateTimeFormat.ISO.TIME)
-    @JsonFormat(pattern = "HH:mm:ss")
     LocalTime regTime;
 
     @NotBlank

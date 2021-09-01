@@ -16,6 +16,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name="vote", uniqueConstraints =
@@ -36,13 +37,14 @@ public class Vote extends BaseEntity {
     @NotNull
     @Schema(description = "Registration time", example = "11:30:20",format = "HH:mm:ss")
     @DateTimeFormat(iso=DateTimeFormat.ISO.TIME)
-    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime regTime;
 
+    public void setRegTime(LocalTime regTime) {
+        this.regTime = LocalTime.parse(regTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     @Hidden
     private User user;
@@ -58,7 +60,7 @@ public class Vote extends BaseEntity {
     public Vote(Integer id, LocalDate regDate, User user, Restaurant restaurant) {
         super(id);
         this.regDate = regDate;
-        this.regTime = LocalTime.now();
+        this.regTime = LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         this.user = user;
         this.restaurant = restaurant;
     }
@@ -67,3 +69,12 @@ public class Vote extends BaseEntity {
     }
 
 }
+
+
+
+
+
+
+
+
+

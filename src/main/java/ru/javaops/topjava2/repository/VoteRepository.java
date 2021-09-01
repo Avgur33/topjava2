@@ -13,7 +13,12 @@ public interface VoteRepository extends BaseRepository<Vote>{
 
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT v FROM Vote v WHERE v.regDate=current_date")
-    List<Vote> getVotesResult();
+    List<Vote> getResult();
+
+    @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT v FROM Vote v WHERE v.regDate >=:startDate AND v.regDate <=:endDate")
+    List<Vote> getResultHistory(LocalDate startDate, LocalDate endDate);
+
 
     @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT v FROM Vote v WHERE v.id=:id")

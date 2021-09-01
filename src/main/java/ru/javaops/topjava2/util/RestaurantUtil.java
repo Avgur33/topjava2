@@ -6,6 +6,7 @@ import ru.javaops.topjava2.to.RestaurantTo;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class RestaurantUtil {
     public static List<RestaurantTo> getTos(Collection<Restaurant> restaurants) {
@@ -13,8 +14,8 @@ public class RestaurantUtil {
                 .map(r -> createTo(r, (int) r
                         .getVotes()
                         .stream()
-                        .filter(v -> v.getRegDate().compareTo(LocalDate.now()) == 0)
-                        .count()))
+                        .filter(v -> v.getRegDate().isEqual(LocalDate.now()))
+                        .count(),null))
                 .toList();
     }
         /*        return restaurants.stream()
@@ -40,11 +41,11 @@ public class RestaurantUtil {
         return new RestaurantTo(rest.getId(),rest.getName(), rest.getLocation(), 0,collect);
     }*/
 
-    public static RestaurantTo createTo(Restaurant rest, int votes) {
-        return new RestaurantTo(rest.getId(),rest.getName(), rest.getLocation(), votes);
+    public static RestaurantTo createTo(Restaurant rest, int votes, Map<LocalDate, Long> history) {
+        return new RestaurantTo(rest.getId(), rest.getName(), rest.getLocation(), votes, history);
     }
 
-    public static RestaurantTo createITo(Integer restaurantId, String name, String location, int intValue) {
-        return new RestaurantTo(restaurantId,name, location, intValue);
+    public static RestaurantTo createHTo(Integer restaurantId, String name, String location, int intValue) {
+        return new RestaurantTo(restaurantId, name, location, intValue,null);
     }
 }

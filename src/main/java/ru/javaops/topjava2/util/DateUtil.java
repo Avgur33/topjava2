@@ -8,14 +8,14 @@ public class DateUtil {
     public static final LocalDate DATE_MAX = LocalDate.of(3000,1,1);
 
     public static LocalDate startDateUtil(LocalDate startDate){
-        if ((startDate == null) || (startDate.compareTo(DATE_MIN)<=0)){
+        if ((startDate == null) || (startDate.isBefore(DATE_MIN))){
             return DATE_MIN;
         }else {
             return startDate;
         }
     }
     public static LocalDate endDateUtil(LocalDate endDate){
-        if ((endDate == null) || (endDate.compareTo(DATE_MIN)<=0)){
+        if ((endDate == null) || (endDate.isAfter(DATE_MAX))){
             return DATE_MAX;
         }else {
             return endDate;

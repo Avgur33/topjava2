@@ -5,7 +5,9 @@ import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.web.AbstractTestData;
 import ru.javaops.topjava2.web.MatcherFactory;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class RestaurantTestData extends AbstractTestData {
 
@@ -16,9 +18,14 @@ public class RestaurantTestData extends AbstractTestData {
     public static final Restaurant rest2 = new Restaurant(REST1_ID + 1, "Pho Bo","Moscow");
     public static final Restaurant rest3 = new Restaurant(REST1_ID + 2, "KFC","Moscow");
 
-    public static final RestaurantTo rest1To = new RestaurantTo(rest1.getId(), rest1.getName(),rest1.getLocation(), 1);
-    public static final RestaurantTo rest2To = new RestaurantTo(rest2.getId(), rest2.getName(),rest2.getLocation(), 1);
-    public static final RestaurantTo rest3To = new RestaurantTo(rest3.getId(), rest3.getName(),rest3.getLocation(), 0);
+    public static final RestaurantTo rest1To =
+            new RestaurantTo(rest1.getId(), rest1.getName(),rest1.getLocation(), 1,
+                    Map.of(LocalDate.now().minusDays(1),1L, LocalDate.now(), 1L));
+    public static final RestaurantTo rest2To =
+            new RestaurantTo(rest2.getId(), rest2.getName(),rest2.getLocation(), 1,
+                    Map.of(LocalDate.now().minusDays(1),1L, LocalDate.now(), 1L));
+    public static final RestaurantTo rest3To =
+            new RestaurantTo(rest3.getId(), rest3.getName(),rest3.getLocation(), 0,null);
 
 
     public static final List<Restaurant> restaurants = List.of(rest1, rest2, rest3);
