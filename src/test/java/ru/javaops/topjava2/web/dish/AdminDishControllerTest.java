@@ -150,6 +150,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
+    @Transactional(propagation = Propagation.NEVER)
     void updateDuplicate() throws Exception {
         Dish updated = getUpdated();
         updated.setId(DISH2_ID);
