@@ -2,6 +2,7 @@ package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -43,11 +44,9 @@ public class Vote extends BaseEntity {
         this.regTime = LocalTime.parse(regTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference
-    @Hidden
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Integer userId;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,15 +56,15 @@ public class Vote extends BaseEntity {
     @Hidden
     private Restaurant restaurant;
 
-    public Vote(Integer id, LocalDate regDate, User user, Restaurant restaurant) {
+    public Vote(Integer id, LocalDate regDate, Integer userId, Restaurant restaurant) {
         super(id);
         this.regDate = regDate;
         this.regTime = LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-        this.user = user;
+        this.userId = userId;
         this.restaurant = restaurant;
     }
     public Vote( Vote v){
-        this(v.getId(), v.getRegDate(),v.getUser(),v.getRestaurant());
+        this(v.getId(), v.getRegDate(),v.getUserId(),v.getRestaurant());
     }
 
 }

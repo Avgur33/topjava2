@@ -143,7 +143,7 @@ class RootControllerBeforeEndTest extends AbstractVoteControllerTest{
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHERVOTE.contentJson(List.of(vote1,vote3)));
+                .andExpect(MATCHERVOTE.contentJson(vote1,vote3));
             }
 
     @Test

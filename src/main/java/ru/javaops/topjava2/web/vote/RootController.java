@@ -104,7 +104,7 @@ public class RootController {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new NotFoundException("Restaurant with id=" + restaurantId + " not found"));
         checkCurrentTime(timeLimit);
-        Vote vote = new Vote(null, LocalDate.now(), user.getUser(), restaurant);
+        Vote vote = new Vote(null, LocalDate.now(), user.id(), restaurant);
         Vote created = voteRepository.save(vote);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -167,7 +167,7 @@ public class RootController {
             vote.get().setRestaurant(restaurant);
             vote.get().setRegTime(LocalTime.now());
         } else {
-            voteRepository.save(new Vote(null, LocalDate.now(), user.getUser(), restaurant));
+            voteRepository.save(new Vote(null, LocalDate.now(), user.id(), restaurant));
         }
     }
 

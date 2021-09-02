@@ -19,21 +19,12 @@ public interface VoteRepository extends BaseRepository<Vote>{
     @Query("SELECT v FROM Vote v WHERE v.regDate >=:startDate AND v.regDate <=:endDate")
     List<Vote> getResultHistory(LocalDate startDate, LocalDate endDate);
 
-
-    @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT v FROM Vote v WHERE v.id=:id")
-    Optional<Vote> getByIdWithUser(Integer id);
-
-    @EntityGraph(attributePaths = {"user", "restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT v FROM Vote v WHERE v.id=:id")
-    Optional<Vote> getByIdWithRestaurantAndUser(Integer id);
-
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT v FROM Vote v WHERE v.user.id=:id AND v.regDate=current_date")
+    @Query("SELECT v FROM Vote v WHERE v.userId=:id AND v.regDate=current_date")
     Optional<Vote> findByUserId(int id);
 
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT v FROM Vote v WHERE v.user.id=:id AND v.regDate >=:startDate AND v.regDate <=:endDate")
+    @Query("SELECT v FROM Vote v WHERE v.userId=:id AND v.regDate >=:startDate AND v.regDate <=:endDate")
     List<Vote> findAllByUserIdFilter(int id, LocalDate startDate, LocalDate endDate);
 
     //https://www.baeldung.com/jpa-queries-custom-result-with-aggregation-functions
