@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.error.NotFoundException;
@@ -35,6 +36,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkCurrentDat
 @RequestMapping(value = AdminMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
+@Validated
 public class AdminMenuController {
     public final static String REST_URL = "/api/admin/restaurants/{restaurantId}/menu";
 
@@ -60,28 +62,31 @@ public class AdminMenuController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Menu> creatWithLocation(@PathVariable int restaurantId,
                                                   @RequestParam @Nullable
-                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate forDate,
+                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate forDate,
                                                   @RequestParam List<Integer> dishes) {
         log.info("create menu for the Restaurant id = {}", restaurantId);
         if ((dishes.size() < 2) || (dishes.size() > 5)) {
             throw new NotFoundException("Wrong dishes number");
         }
 
-        if (forDate!=null) {checkCurrentDate(forDate);}
+        if (forDate != null) {
+            checkCurrentDate(forDate);
+        }
 
         Restaurant rest = restaurantRepository
                 .findById(restaurantId)
-                .orElseThrow(() -> new NotFoundException("Restaurant with id=" + restaurantId + " not found"));
+                .orElseThrow(() -> new NotFoundException("Restaurant with id= " + restaurantId + " not found"));
 
         List<Dish> dishList = dishes.stream()
                 .map(id -> dishRepository
                         .findById(id)
-                        .orElseThrow(() -> new NotFoundException("Dish with id=" + id + " not found")))
+                        .orElseThrow(() -> new NotFoundException("Dish with id= " + id + " not found")))
                 .toList();
 
-        Menu menu = new Menu(null, forDate==null? LocalDate.now():forDate, rest, dishList);
+        Menu menu = new Menu(null, forDate == null ? LocalDate.now() : forDate, rest, dishList);
 
         Menu created = menuRepository.save(menu);
+
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(restaurantId, created.getId()).toUri();
@@ -220,7 +225,6 @@ public class AdminMenuController {
                         .findById(i)
                         .orElseThrow(() -> new NotFoundException("Dish with id=" + i + " not found")))
                 .toList();
-
         menu.setDishes(dishList);
     }
 }

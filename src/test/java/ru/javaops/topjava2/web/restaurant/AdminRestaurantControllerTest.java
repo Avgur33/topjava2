@@ -20,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.topjava2.util.JsonUtil.writeValue;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
-import static ru.javaops.topjava2.web.user.UserTestData.NOT_FOUND;
 
 class AdminRestaurantControllerTest extends AbstractControllerTest {
 
@@ -185,6 +184,6 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHERTO.contentJson( restaurantsTo ));
+                .andExpect(MATCHER.contentJson( restaurants ));
     }
 }

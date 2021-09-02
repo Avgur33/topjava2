@@ -82,8 +82,7 @@ public class RootController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<MenuTo>> get(@RequestParam Integer pageNumber, @RequestParam Integer pageSize) {
         log.info("get Menus for today");
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        List<Menu> menuList = menuRepository.getToday(pageable);
+        List<Menu> menuList = menuRepository.getToday(PageRequest.of(pageNumber, pageSize));
         return ResponseEntity.ok(getTos(menuList));
     }
 
@@ -101,11 +100,10 @@ public class RootController {
     @Transactional
     public ResponseEntity<Vote> createVoteWithLocation(@RequestParam Integer restaurantId, @AuthenticationPrincipal AuthUser user) {
         log.info("Vote");
-        Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new NotFoundException("Restaurant with id=" + restaurantId + " not found"));
+
         checkCurrentTime(timeLimit);
-        Vote vote = new Vote(null, LocalDate.now(), user.id(), restaurant);
-        Vote created = voteRepository.save(vote);
+        Vote created = voteRepository
+                .save(new Vote(null, LocalDate.now(), user.id(), getRestaurantById(restaurantId)));
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -161,13 +159,11 @@ public class RootController {
         log.info("Get history vote");
         checkCurrentTime(timeLimit);
         Optional<Vote> vote = voteRepository.findByUserId(user.id());
-        Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new NotFoundException("Restaurant with id=" + restaurantId + " not found"));
         if (vote.isPresent()) {
-            vote.get().setRestaurant(restaurant);
+            vote.get().setRestaurant(getRestaurantById(restaurantId));
             vote.get().setRegTime(LocalTime.now());
         } else {
-            voteRepository.save(new Vote(null, LocalDate.now(), user.id(), restaurant));
+            voteRepository.save(new Vote(null, LocalDate.now(), user.id(), getRestaurantById(restaurantId)));
         }
     }
 
@@ -176,9 +172,7 @@ public class RootController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<RestaurantTo>> getResult() {
         log.info("get Result for today");
-        List<Vote> resultList = voteRepository.getResult();
-        Map<Restaurant, Long> map = resultList.stream().collect(Collectors.groupingBy(Vote::getRestaurant, Collectors.counting()));
-        return ResponseEntity.ok(map.entrySet().stream().map(e -> RestaurantUtil.createTo(e.getKey(), e.getValue().intValue(),null)).toList());
+        return ResponseEntity.ok(RestaurantUtil.getTos(voteRepository.getResult()));
     }
 
     @Operation(summary = "Get history of voting",
@@ -198,19 +192,12 @@ public class RootController {
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         log.info("get history result");
 
-        List<Vote> resultList = voteRepository.getResultHistory(startDateUtil(startDate),endDateUtil(endDate));
-
-        Map<Restaurant, Map<LocalDate,Long>> history = resultList.stream().collect(Collectors.groupingBy(Vote::getRestaurant,
-                Collectors.groupingBy(Vote::getRegDate,Collectors.counting())));
-
-        return ResponseEntity.ok(history.entrySet().stream().map(e->RestaurantUtil.createTo(e.getKey(),e.getValue().get(LocalDate.now()).intValue(),e.getValue())).toList());
+        return ResponseEntity.ok(RestaurantUtil
+                .getHistoryTos(voteRepository.getResultHistory(startDateUtil(startDate),endDateUtil(endDate))));
     }
 
-
-
-
-
-
-
-
+    private Restaurant getRestaurantById(Integer id){
+        return restaurantRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Restaurant with id=" + id + " not found"));
+    }
 }

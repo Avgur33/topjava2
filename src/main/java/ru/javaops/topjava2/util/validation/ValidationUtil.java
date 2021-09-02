@@ -35,12 +35,12 @@ public class ValidationUtil {
 
     public static void checkCurrentTime(LocalTime time){
         if (LocalTime.now().isAfter(time)) {
-            throw new LateTimeException("Voting ended at " + time + " o'clock");
+            throw new LateTimeException("Voting end at " + time + " o'clock");
         }
     }
 
     public static void checkCurrentDate(LocalDate ld){
-        if (LocalDate.now().compareTo(ld) > 0 ) {
+        if (LocalDate.now().isAfter(ld)) {
             throw new LateTimeException("You can't change old menu");
         }
     }

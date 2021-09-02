@@ -1,7 +1,10 @@
 package ru.javaops.topjava2.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.time.LocalDate;
 
+@UtilityClass
 public class DateUtil {
 
     public static final LocalDate DATE_MIN = LocalDate.of(2000,1,1);

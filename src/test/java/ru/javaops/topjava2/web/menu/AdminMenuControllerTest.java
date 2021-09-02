@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaops.topjava2.web.AbstractTestData.*;
 import static ru.javaops.topjava2.web.menu.MenuTestData.*;
 
 class AdminMenuControllerTest extends AbstractControllerTest {
@@ -75,27 +74,27 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     void creatWithLocation() throws Exception {
         ResultActions action = perform(MockMvcRequestBuilders
                 .post(REST_URL + REST3_ID + "/menu")
-                .param("forDate","")
-                .param("dishes","7","8","9")
+                .param("forDate", "")
+                .param("dishes", "7", "8", "9")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated());
 
-        Menu newMenu = new Menu(null, LocalDate.now(),null,null);
+        Menu newMenu = new Menu(null, LocalDate.now(), null, null);
         Menu created = MATCHER.readFromJson(action);
         int newId = created.getId();
         newMenu.setId(newId);
-        MATCHER.assertMatch(created,newMenu);
-        MATCHER.assertMatch(menuRepository.getById(newId),newMenu);
+        MATCHER.assertMatch(created, newMenu);
+        MATCHER.assertMatch(menuRepository.getById(newId), newMenu);
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void creatDuplicate() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders
+        perform(MockMvcRequestBuilders
                 .post(REST_URL + REST1_ID + "/menu")
-                .param("forDate","")
-                .param("dishes","1","2","3")
+                .param("forDate", "")
+                .param("dishes", "1", "2", "3")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
@@ -105,10 +104,10 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void creatNotEnough() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders
+        perform(MockMvcRequestBuilders
                 .post(REST_URL + REST1_ID + "/menu")
-                .param("forDate","")
-                .param("dishes","1")
+                .param("forDate", "")
+                .param("dishes", "1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
@@ -117,10 +116,10 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void creatTooMuch() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders
+        perform(MockMvcRequestBuilders
                 .post(REST_URL + REST1_ID + "/menu")
-                .param("forDate","")
-                .param("dishes","1","2","3","4","5","6")
+                .param("forDate", "")
+                .param("dishes", "1", "2", "3", "4", "5", "6")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
@@ -129,10 +128,10 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void creatEarlier() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders
+        perform(MockMvcRequestBuilders
                 .post(REST_URL + REST3_ID + "/menu")
-                .param("forDate",LocalDate.now().minusDays(1).toString())
-                .param("dishes","7","8","9")
+                .param("forDate", LocalDate.now().minusDays(1).toString())
+                .param("dishes", "7", "8", "9")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isLocked());
@@ -178,7 +177,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getBy() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/menu/by" ))
+        perform(MockMvcRequestBuilders.get(REST_URL + REST1_ID + "/menu/by"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -188,9 +187,9 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getAll() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + REST2_ID + "/menu/" )
-                .param("startDate","")
-                .param("endDate",""))
+        perform(MockMvcRequestBuilders.get(REST_URL + REST2_ID + "/menu/")
+                .param("startDate", "")
+                .param("endDate", ""))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -200,9 +199,9 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER1_MAIL)
     void getAllForBidden() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + REST2_ID + "/menu/" )
-                .param("startDate","")
-                .param("endDate",""))
+        perform(MockMvcRequestBuilders.get(REST_URL + REST2_ID + "/menu/")
+                .param("startDate", "")
+                .param("endDate", ""))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
@@ -211,7 +210,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void update() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL + REST2_ID + "/menu/" + MENU5_ID)
-                .param("dishes","4","5")
+                .param("dishes", "4", "5")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNoContent());
@@ -221,7 +220,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = USER1_MAIL)
     void updateForbidden() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL + REST2_ID + "/menu/" + MENU5_ID)
-                .param("dishes","4","5")
+                .param("dishes", "4", "5")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isForbidden());
@@ -231,7 +230,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void updateTooLate() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL + REST2_ID + "/menu/" + MENU2_ID)
-                .param("dishes","4","5")
+                .param("dishes", "4", "5")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isLocked());
@@ -241,7 +240,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void updateWrongRestaurant() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL + REST1_ID + "/menu/" + MENU5_ID)
-                .param("dishes","4","5")
+                .param("dishes", "4", "5")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
@@ -251,7 +250,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void updateNotEnoughDish() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL + REST2_ID + "/menu/" + MENU5_ID)
-                .param("dishes","4")
+                .param("dishes", "4")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
@@ -261,7 +260,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void updateTooMuchDish() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL + REST2_ID + "/menu/" + MENU5_ID)
-                .param("dishes","4","5","6","7","8","9")
+                .param("dishes", "4", "5", "6", "7", "8", "9")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());

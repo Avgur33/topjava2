@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +21,11 @@ import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.MenuRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
-import ru.javaops.topjava2.to.RestaurantTo;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
-import static ru.javaops.topjava2.util.RestaurantUtil.getTos;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
@@ -72,7 +71,6 @@ public class AdminRestaurantController {
 
     @Operation(
             summary = "Delete restaurant",
-            description = "Only for Admin",
             parameters = {
                     @Parameter(name = "id",
                             description = "The id of restaurant that needs to be deleted. Use 1 for testing.",
@@ -101,7 +99,6 @@ public class AdminRestaurantController {
 
     @Operation(
             summary = "Create restaurant",
-            description = "Only for Admin",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Create the restaurant",
                             content = @Content(mediaType = "application/json",
@@ -128,7 +125,6 @@ public class AdminRestaurantController {
 
     @Operation(
             summary = "Update restaurant",
-            description = "Only for Admin",
             parameters = {
                     @Parameter(name = "id",
                             description = "The id of restaurant that needs to be deleted. Use 1 for testing.",
@@ -151,7 +147,6 @@ public class AdminRestaurantController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public void update(@RequestBody @Valid Restaurant rest, @PathVariable int id) {
         log.info("update {} with id={}", rest, id);
         assureIdConsistent(rest, id);
@@ -159,17 +154,17 @@ public class AdminRestaurantController {
     }
     //https://stackoverflow.com/questions/60002234/how-to-annotate-array-of-objects-response-in-swagger
     @Operation(
-            summary = "Get all restaurants with number of votes for today",
+            summary = "Get all restaurants",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "List of restaurantTo",
+                    @ApiResponse(responseCode = "200", description = "List of restaurants",
                             content = @Content(mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = RestaurantTo.class)))),
+                                    array = @ArraySchema(schema = @Schema(implementation = Restaurant.class)))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content())
             })
 
     @GetMapping
-    public List<RestaurantTo> getAll() {
+    public List<Restaurant> getAll() {
         log.info("Restaurant getAll");
-        return getTos(repository.getAllWithVotes());
+        return repository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 }

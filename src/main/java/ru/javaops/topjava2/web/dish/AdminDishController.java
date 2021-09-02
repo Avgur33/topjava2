@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.error.ErrorInfo;
 import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Dish;
+import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 
@@ -62,10 +63,8 @@ public class AdminDishController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer restaurantId, @PathVariable Integer id) {
 
-        log.info("Restaurant delete {}", id);
-        Dish dish = repository
-                .findByIdWithRestaurant(id)
-                .orElseThrow(() -> new NotFoundException(" Entity Dish with id = " + id + " not found"));
+        log.info("Delete dish with id = {}", id);
+        Dish dish = getDishById(id);
         assureIdConsistent(dish.getRestaurant(), restaurantId);
         repository.deleteExisted(id);
     }
@@ -85,10 +84,11 @@ public class AdminDishController {
             }
     )
     @GetMapping()
-    public List<Dish> getAll(@PathVariable int restaurantId) {
-        //ToDo валидация Id ресторана (такого ресторана нет)
-
-        log.info("get dishes for restaurant {}", restaurantId);
+    public List<Dish> getAll(@PathVariable Integer restaurantId) {
+        log.info("get dishes for restaurant with id = {}", restaurantId);
+        if (!restaurantRepository.existsById(restaurantId)){
+            throw new NotFoundException("Entity Restaurant with id = " + restaurantId + " not found");
+        }
         return repository.getDishesByRestaurantId(restaurantId);
     }
 
@@ -118,11 +118,9 @@ public class AdminDishController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<Dish> get(@PathVariable Integer restaurantId, @PathVariable Integer id) {
-        log.info("get dish by ID for restaurant {}", restaurantId);
-        Dish dish = repository
-                .findByIdWithRestaurant(id)
-                .orElseThrow(() -> new NotFoundException(" Entity Dish with id = " + id + " not found"));
+    public ResponseEntity<Dish> get(@PathVariable  Integer restaurantId, @PathVariable Integer id) {
+        log.info("get dish by id = {} for restaurant id = {}",id, restaurantId);
+        Dish dish = getDishById(id);
         assureIdConsistent(dish.getRestaurant(), restaurantId);
         return ResponseEntity.ok(dish);
     }
@@ -155,11 +153,10 @@ public class AdminDishController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ResponseEntity<Dish> creatWithLocation(@PathVariable int restaurantId, @Valid @RequestBody Dish dish) {
+    public ResponseEntity<Dish> creatWithLocation(@PathVariable  Integer restaurantId, @Valid @RequestBody Dish dish) {
         log.info("create {}", dish);
         checkNew(dish);
-        dish.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow(() ->
-                new NotFoundException("Restaurant with id=" + restaurantId + " not found")));
+        dish.setRestaurant(getRestaurantById(restaurantId));
         Dish created = repository.save(dish);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -196,12 +193,25 @@ public class AdminDishController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public void update(@PathVariable int restaurantId, @PathVariable int id, @Valid @RequestBody Dish dish) {
+    public void update(@PathVariable Integer restaurantId, @PathVariable Integer id, @Valid @RequestBody Dish dish) {
         log.info("update {} with id={}", dish, id);
         assureIdConsistent(dish, id);
-        Dish updated = repository.getById(id);
+        Dish updated = getDishById(id);
         assureIdConsistent(updated.getRestaurant(), restaurantId);
         updated.setName(dish.getName());
         updated.setPrice(dish.getPrice());
     }
+
+    private Dish getDishById(Integer id){
+        return repository
+                .findByIdWithRestaurant(id)
+                .orElseThrow(() -> new NotFoundException("Entity Dish with id = " + id + " not found"));
+    }
+
+    private Restaurant getRestaurantById(Integer id){
+        return restaurantRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException("Entity Restaurant with id = " + id + " not found"));
+    }
+
 }

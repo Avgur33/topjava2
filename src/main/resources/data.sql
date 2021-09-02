@@ -11,7 +11,7 @@ DELETE FROM users;*/
 INSERT INTO users (name, email, password)
 VALUES ('User', 'user@yandex.ru', '{noop}password'),    --1
        ('Admin', 'admin@gmail.com', '{noop}admin'),     --2
-       ('User2', 'user2@yandex.ru', '{noop}password');    --3
+       ('User2', 'user2@yandex.ru', '{noop}password');  --3
 
 INSERT INTO user_roles (role, user_id)
 VALUES ('USER', 1),
@@ -42,7 +42,6 @@ VALUES  (now()-INTERVAL 1 DAY, 1),
         (now()-INTERVAL 1 DAY, 3),
         (now(), 1),
         (now(), 2);
-        /*(now(), 3);*/
 
 INSERT INTO menu_dishes (menu_id, dishes_id)
 VALUES  (1, 1), (1, 2), (1,3),
@@ -50,7 +49,6 @@ VALUES  (1, 1), (1, 2), (1,3),
         (3, 7), (3, 8), (3,9),
         (4, 1), (4, 2), (4,3),
         (5, 4), (5, 5), (5,6);
-        /*(6, 7), (6, 8), (6,9);*/
 
 INSERT INTO vote (user_id, restaurant_id, reg_date, reg_time)
 VALUES (1, 1, now()-INTERVAL 1 DAY, current_time),

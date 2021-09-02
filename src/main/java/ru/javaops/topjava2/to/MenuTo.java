@@ -9,14 +9,14 @@ import java.util.Map;
 public class MenuTo {
 
     Integer id;
-    String Name;
-    String Location;
+    String name;
+    String location;
     Map<String,Integer> dishes;
 
     public MenuTo(Integer id, String name, String location, Map<String, Integer> dishes) {
         this.id = id;
-        Name = name;
-        Location = location;
+        this.name = name;
+        this.location = location;
         this.dishes = dishes;
     }
 }

@@ -4,7 +4,6 @@ package ru.javaops.topjava2.web.vote;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.containsString;
@@ -21,12 +20,12 @@ public class RootControllerAfterEndTest extends AbstractVoteControllerTest {
     @Test
     @WithUserDetails(value = USER2_MAIL)
     void createVoteWithLocation() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders
+        perform(MockMvcRequestBuilders
                 .post(REST_URL + "/vote")
                 .param("restaurantId", Integer.toString(REST1_ID)))
                 .andDo(print())
                 .andExpect(status().isLocked())
-                .andExpect(content().string(containsString("Voting ended")));
+                .andExpect(content().string(containsString("Voting end at")));
     }
 
     @Test
@@ -36,7 +35,7 @@ public class RootControllerAfterEndTest extends AbstractVoteControllerTest {
                 .param("restaurantId", Integer.toString(REST2_ID)))
                 .andDo(print())
                 .andExpect(status().isLocked())
-                .andExpect(content().string(containsString("Voting ended")));
+                .andExpect(content().string(containsString("Voting end at")));
 
     }
 }
