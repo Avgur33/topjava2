@@ -1,7 +1,7 @@
 [Выпускной Проект курса TopJava](https://javaops.ru/view/topjava)
 ===============================
 
-####  Стек
+####  Stack
 - Spring Boot 2.5, Spring MVC, Security, Lombok, H2, Swagger/OpenAPI 3.0, Caffeine Cache 
 
 #### Task:
@@ -27,7 +27,7 @@ P.S.: Make sure everything works with latest version that is on github :)
 P.P.S.: Assume that your API will be used by a frontend developer to build frontend on top of that.
 
 #### Description
-- DB - h2 (in memory)
+- DB - H2 (in memory)
 - time limit for deciding given by "limit-time:vote" in application.yaml 
 - Admin - create restaurant - create dishes for restaurant - create menu for restaurant with its dishes 
 - User - create vote
@@ -38,10 +38,10 @@ P.P.S.: Assume that your API will be used by a frontend developer to build front
 - Documentation for api in swagger.json
 - Test users credentials:
   - user with USER role: 
-    - login: user@yandex.ru; 
+    - login: user@yandex.ru 
     - password: password
   - user with ADMIN role: 
-    - login: admin@gmail.com; 
+    - login: admin@gmail.com 
     - password: admin
 
 
