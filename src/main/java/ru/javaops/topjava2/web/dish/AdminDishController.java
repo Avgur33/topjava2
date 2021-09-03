@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +36,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @RequestMapping(value = AdminDishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
+@CacheConfig(cacheNames = "dishes")
 public class AdminDishController {
     private final DishRepository repository;
     private final RestaurantRepository restaurantRepository;
@@ -46,8 +50,8 @@ public class AdminDishController {
                             content = @Content(examples = {@ExampleObject(value = "1")}),
                             required = true),
                     @Parameter(name = "id",
-                            description = "The id of dish that needs to be deleted. Use 1 for testing.",
-                            content = @Content(examples = {@ExampleObject(value = "1")}),
+                            description = "The id of dish that needs to be deleted. Use 10 for testing.",
+                            content = @Content(examples = {@ExampleObject(value = "10")}),
                             required = true)
             },
             responses = {
@@ -61,6 +65,7 @@ public class AdminDishController {
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(key="#restaurantId")
     public void delete(@PathVariable Integer restaurantId, @PathVariable Integer id) {
 
         log.info("Delete dish with id = {}", id);
@@ -84,6 +89,7 @@ public class AdminDishController {
             }
     )
     @GetMapping()
+    @Cacheable(key = "#restaurantId")
     public List<Dish> getAll(@PathVariable Integer restaurantId) {
         log.info("get dishes for restaurant with id = {}", restaurantId);
         if (!restaurantRepository.existsById(restaurantId)){
@@ -153,6 +159,7 @@ public class AdminDishController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
+    @CacheEvict(key="#restaurantId")
     public ResponseEntity<Dish> creatWithLocation(@PathVariable  Integer restaurantId, @Valid @RequestBody Dish dish) {
         log.info("create {}", dish);
         checkNew(dish);
@@ -193,6 +200,7 @@ public class AdminDishController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
+    @CacheEvict(key="#restaurantId")
     public void update(@PathVariable Integer restaurantId, @PathVariable Integer id, @Valid @RequestBody Dish dish) {
         log.info("update {} with id={}", dish, id);
         assureIdConsistent(dish, id);

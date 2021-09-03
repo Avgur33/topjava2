@@ -39,6 +39,7 @@ spring:
     cache-names: users
     caffeine.spec: maximumSize=1,expireAfterAccess=60s
 
+
   h2:
     console:
       enabled: true

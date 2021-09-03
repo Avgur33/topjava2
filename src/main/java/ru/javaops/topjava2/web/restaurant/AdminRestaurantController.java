@@ -118,6 +118,7 @@ public class AdminRestaurantController {
                                     schema = @Schema(implementation = ErrorInfo.class)))
             })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    //@CacheEvict(allEntries = true)
     @CacheEvict(allEntries = true)
     public ResponseEntity<Restaurant> creatWithLocation(@RequestBody @Valid Restaurant rest) {
         log.info("create {}", rest);
