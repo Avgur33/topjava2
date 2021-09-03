@@ -33,7 +33,7 @@ public class UniqueMailValidator implements org.springframework.validation.Valid
                         if (request.getMethod().equals("PUT")) {  // UPDATE
                             int dbId = dbUser.id();
 
-                            // it is ok, if update ourself
+                            // it is ok, if update yourself
                             if (user.getId() != null && dbId == user.id()) return;
 
                             // Workaround for update with nullable id in user (in request body)

@@ -11,7 +11,6 @@ import ru.javaops.topjava2.web.AbstractControllerTest;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaops.topjava2.web.AbstractTestData.USER1_MAIL;
 import static ru.javaops.topjava2.web.menu.MenuTestData.MATCHER_MENU_TO;
 import static ru.javaops.topjava2.web.menu.MenuTestData.allMenuTosForToday;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;

@@ -1,6 +1,5 @@
 package ru.javaops.topjava2.repository;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +23,12 @@ public interface VoteRepository extends BaseRepository<Vote>{
     @Query("SELECT v FROM Vote v WHERE v.userId=:id AND v.regDate=current_date")
     Optional<Vote> findByUserId(int id);
 
-    //@Cacheable(cacheNames = "votes_user", keyGenerator = "votesUserKeyGenerator")
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT v FROM Vote v WHERE v.userId=:id AND v.regDate >=:startDate AND v.regDate <=:endDate")
     List<Vote> findAllByUserIdFilter(int id, LocalDate startDate, LocalDate endDate);
 
     //https://www.baeldung.com/jpa-queries-custom-result-with-aggregation-functions
- /*   @Query("SELECT new ru.javaops.topjava2.model.RestaurantC(v.restaurant.id,v.restaurant.name,v.restaurant.location, count(v)) FROM Vote v JOIN v.restaurant WHERE v.regDate=current_date GROUP BY v.restaurant.id")
+    /*@Query("SELECT new ru.javaops.topjava2.model.RestaurantC(v.restaurant.id,v.restaurant.name,v.restaurant.location, count(v)) FROM Vote v JOIN v.restaurant WHERE v.regDate=current_date GROUP BY v.restaurant.id")
     List<RestaurantTo> getResultVotes();*/
 
 
