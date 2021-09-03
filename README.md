@@ -1,17 +1,56 @@
-[Проект TopJava-2](https://javaops.ru/view/topjava2)
+[Выпускной Проект курса TopJava](https://javaops.ru/view/topjava)
 ===============================
 
-#### Разбор решения [выпускного проекта TopJava](https://github.com/JavaOPs/topjava/blob/master/graduation.md)
-- Spring Boot 2.5, Lombok, H2, Swagger/OpenAPI 3.0, Caffeine Cache
-- Исходный код взят из миграции TopJava на Spring Boot (без еды)
-- На основе этого репозитория на курсе будет выполняться выпускной проект "Голосование за рестораны"
+####  Стек
+- Spring Boot 2.5, Spring MVC, Security, Lombok, H2, Swagger/OpenAPI 3.0, Caffeine Cache 
 
-#### Рефакторинг кода TopJava:
-- в нашем приложении теперь только REST контроллеры, не надо добавлять `Rest` в имя
-- заменил префикс `/rest` в URLs на `/api` 
-- каждый контроллер занимается своими CRUD, переименовал `Admin[Rest]Controller` в `AdminUserController`
-- исключил `AppConfig.h2Server` из тестов, он там не нужен
-- удалил проверки `ValidationUtil.checkNotFound`. Есть готовый метод `JpaRepository.getById`, который бросает `EntityNotFoundException`. 
-Добавил его обработку в `GlobalExceptionHandler`.
-- сделал общий метод `BaseRepository.deleteExisted`
-- TODO: кэшируйте только наиболее часто запрашиваемые данные
+#### Task:
+Design and implement a REST API using Hibernate/Spring/SpringMVC (or Spring-Boot) without frontend.
+
+The task is:
+
+Build a voting system for deciding where to have lunch.
+
+- 2 types of users: admin and regular users
+- Admin can input a restaurant and it's lunch menu of the day (2-5 items usually, just a dish name and price)
+- Menu changes each day (admins do the updates)
+- Users can vote on which restaurant they want to have lunch at
+- Only one vote counted per user
+- If user votes again the same day:
+- If it is before 11:00 we assume that he changed his mind.
+- If it is after 11:00 then it is too late, vote can't be changed
+- Each restaurant provides a new menu each day.
+
+As a result, provide a link to github repository. It should contain the code, README.md with API documentation and couple curl commands to test it (better - Swagger).
+
+P.S.: Make sure everything works with latest version that is on github :)
+P.P.S.: Assume that your API will be used by a frontend developer to build frontend on top of that.
+
+#### Description
+- DB - h2 (in memory)
+- time limit for deciding given by "limit-time:vote" in application.yaml 
+- Admin - create restaurant - create dishes for restaurant - create menu for restaurant with its dishes 
+- User - create vote
+
+#### For test 
+- DB - http://localhost:8080/h2-console 
+- Swagger - http://localhost:8080/swagger-ui
+- Documentation for api in swagger.json
+- Test users credentials:
+  - user with USER role: 
+    - login: user@yandex.ru; 
+    - password: password
+  - user with ADMIN role: 
+    - login: admin@gmail.com; 
+    - password: admin
+
+
+
+
+
+
+
+
+
+
+

@@ -6,8 +6,6 @@ DELETE FROM restaurant;
 DELETE FROM user_roles;
 DELETE FROM users;*/
 
-
-
 INSERT INTO users (name, email, password)
 VALUES ('User', 'user@yandex.ru', '{noop}password'),    --1
        ('Admin', 'admin@gmail.com', '{noop}admin'),     --2

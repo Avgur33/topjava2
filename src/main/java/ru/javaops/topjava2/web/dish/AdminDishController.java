@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
@@ -37,6 +38,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @Slf4j
 @AllArgsConstructor
 @CacheConfig(cacheNames = "dishes")
+@Tag(name = "AdminDishController")
 public class AdminDishController {
     private final DishRepository repository;
     private final RestaurantRepository restaurantRepository;

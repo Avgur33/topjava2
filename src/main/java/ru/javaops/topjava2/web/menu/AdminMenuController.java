@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -38,6 +39,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkCurrentDat
 @Slf4j
 @AllArgsConstructor
 @Validated
+@Tag(name = "AdminMenuController")
 public class AdminMenuController {
     public final static String REST_URL = "/api/admin/restaurants/{restaurantId}/menu";
 

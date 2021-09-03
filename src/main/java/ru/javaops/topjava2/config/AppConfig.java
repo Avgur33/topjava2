@@ -69,7 +69,7 @@ public class AppConfig {
     public CaffeineCache rootVote () {
         return new CaffeineCache("rootVote",
                 Caffeine.newBuilder()
-                        .maximumSize(1)
+                        .maximumSize(50)
                         .expireAfterAccess(30, TimeUnit.MINUTES)
                         .build());
     }

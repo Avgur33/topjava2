@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -46,8 +47,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkCurrentTim
 @RestController
 @RequestMapping(value = RootController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-
-
+@Tag(name = "RootController")
 public class RootController {
     public final static String REST_URL = "/api/root";
 

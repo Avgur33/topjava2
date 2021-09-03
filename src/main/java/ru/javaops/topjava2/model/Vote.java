@@ -29,13 +29,11 @@ public class Vote extends BaseEntity {
 
     @Column(name = "reg_date", nullable = false,columnDefinition = "date default now()")
     @NotNull
-    @Schema(description = "Registration date", example = "2020-02-20",format = "yyyy-MM-dd")
     @DateTimeFormat(iso=DateTimeFormat.ISO.DATE)
     private LocalDate regDate;
 
     @Column(name = "reg_time", nullable = false,columnDefinition = "time default now()")
     @NotNull
-    @Schema(description = "Registration time", example = "11:30:20",format = "HH:mm:ss")
     @DateTimeFormat(iso=DateTimeFormat.ISO.TIME)
     private LocalTime regTime;
 

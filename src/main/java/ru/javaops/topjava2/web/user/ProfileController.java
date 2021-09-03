@@ -1,6 +1,7 @@
 package ru.javaops.topjava2.web.user;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -26,6 +27,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @RestController
 @RequestMapping(value = ProfileController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@Tag(name = "ProfileController", description = "Controller for registration User.")
 @CacheConfig(cacheNames = "users")
 public class ProfileController extends AbstractUserController {
     static final String REST_URL = "/api/profile";
