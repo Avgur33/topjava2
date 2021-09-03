@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -60,11 +59,10 @@ public class RootController {
     private final VoteRepository voteRepository;
     private final RestaurantRepository restaurantRepository;
 
-    public RootController(MenuRepository menuRepository, VoteRepository voteRepository, RestaurantRepository restaurantRepository, CaffeineCache votesUser) {
+    public RootController(MenuRepository menuRepository, VoteRepository voteRepository, RestaurantRepository restaurantRepository) {
         this.menuRepository = menuRepository;
         this.voteRepository = voteRepository;
         this.restaurantRepository = restaurantRepository;
-        this.votesUser = votesUser;
     }
 
     @Operation(
@@ -81,6 +79,7 @@ public class RootController {
             })
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(cacheNames = "rootVote")
     public ResponseEntity<List<MenuTo>> get(@RequestParam Integer pageNumber, @RequestParam Integer pageSize) {
         log.info("get Menus for today");
         List<Menu> menuList = menuRepository.getToday(PageRequest.of(pageNumber, pageSize));
@@ -99,6 +98,7 @@ public class RootController {
     @PostMapping("/vote")
     @ResponseStatus(HttpStatus.OK)
     @Transactional
+
     public ResponseEntity<Vote> createVoteWithLocation(@RequestParam Integer restaurantId, @AuthenticationPrincipal AuthUser user) {
         log.info("Vote");
 
@@ -115,6 +115,7 @@ public class RootController {
     @Operation(summary = "Get today vote for authenticated user")
     @GetMapping("/vote/by")
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(cacheNames = "userVote", key = "#user.id()")
     public ResponseEntity<VoteTo> getVote(@AuthenticationPrincipal AuthUser user) {
         log.info("Vote");
         Vote vote = voteRepository.findByUserId(user.id())
@@ -134,7 +135,6 @@ public class RootController {
     )
     @GetMapping("/vote/user/history")
     @ResponseStatus(HttpStatus.OK)
-    @Cacheable(cacheNames = "votes_user", keyGenerator = "votesUserKeyGenerator")
     public ResponseEntity<List<VoteTo>> getAllVotes(
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
@@ -144,7 +144,6 @@ public class RootController {
         return ResponseEntity.ok(VoteUtil.getTos(votes));
     }
 
-    private CaffeineCache votesUser;
     @Operation(summary = "Update vote for authenticated user",
             description = "if user not voting yet - create vote",
             parameters = {
@@ -158,7 +157,7 @@ public class RootController {
     @PutMapping("/vote")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    @CacheEvict(key = "#{(T(ru.javaops.topjava2.util.DateUtil).endDateUtil(endDate))}")
+    @CacheEvict(cacheNames = "userVote",key="#user.id()",allEntries = true)
     public void update(@RequestParam Integer restaurantId, @AuthenticationPrincipal AuthUser user) {
         log.info("Get history vote");
         checkCurrentTime(timeLimit);

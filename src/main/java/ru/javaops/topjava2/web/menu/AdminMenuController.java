@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -108,6 +109,7 @@ public class AdminMenuController {
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(cacheNames = {"rootVote","userVote"},allEntries = true)
     public void delete(@PathVariable Integer restaurantId, @PathVariable Integer id) {
 
         log.info("Menu delete {}", id);

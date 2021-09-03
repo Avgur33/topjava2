@@ -55,7 +55,6 @@ public class AdminRestaurantController {
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = Restaurant.class))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
-                    //@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content()),
                     @ApiResponse(responseCode = "400", description = "Bad Request",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorInfo.class))),
@@ -95,7 +94,7 @@ public class AdminRestaurantController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    @CacheEvict(allEntries = true)
+    @CacheEvict(cacheNames = {"rootVote","userVote","restaurants","dishes"},allEntries = true)
     public void delete(@PathVariable int id) {
         log.info("Restaurant delete {}", id);
         menuRepository.deleteByRestaurantId(id);
@@ -119,7 +118,7 @@ public class AdminRestaurantController {
             })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     //@CacheEvict(allEntries = true)
-    @CacheEvict(allEntries = true)
+    @CacheEvict(cacheNames = {"rootVote","userVote","restaurants","dishes"},allEntries = true)
     public ResponseEntity<Restaurant> creatWithLocation(@RequestBody @Valid Restaurant rest) {
         log.info("create {}", rest);
         checkNew(rest);
@@ -154,7 +153,7 @@ public class AdminRestaurantController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(allEntries = true)
+    @CacheEvict(cacheNames = {"rootVote","userVote","restaurants","dishes"},allEntries = true)
     public void update(@RequestBody @Valid Restaurant rest, @PathVariable int id) {
         log.info("update {} with id={}", rest, id);
         assureIdConsistent(rest, id);

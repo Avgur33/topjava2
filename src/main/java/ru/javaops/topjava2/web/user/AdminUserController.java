@@ -29,7 +29,6 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @RequestMapping(value = AdminUserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @Tag(name = "AdminUserController", description = "Controller for manipulating with User. Only for Admin.")
-// TODO: cache only most requested data!
 @CacheConfig(cacheNames = "users")
 public class AdminUserController extends AbstractUserController {
 

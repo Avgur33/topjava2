@@ -20,7 +20,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email", name = "users_unique_email_idx")})
-@SequenceGenerator(name = "users_seq",sequenceName ="USERS_SEQ", allocationSize = 500)
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
