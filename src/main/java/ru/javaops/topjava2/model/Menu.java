@@ -34,6 +34,7 @@ public class Menu extends BaseEntity {
 
     //https://stackoverflow.com/questions/15155587/hibernate-bidirectional-manytomany-delete-issue
     @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @OrderBy("price DESC")
     @JoinTable(name = "menu_dishes",
             joinColumns = @JoinColumn(name = "menu_id"),
             inverseJoinColumns = @JoinColumn(name = "dishes_id"))

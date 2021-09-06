@@ -35,9 +35,9 @@ spring:
     date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
     time-zone: UTC
   # https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#common-application-properties-cache
-  cache:
-    cache-names: users
-    caffeine.spec: maximumSize=1,expireAfterAccess=60s
+  # cache:
+   # cache-names: users
+   # caffeine.spec: maximumSize=1,expireAfterAccess=60s
 
 
   h2:

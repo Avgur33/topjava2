@@ -7,6 +7,8 @@ import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.to.MenuTo;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,8 @@ public class MenuUtil {
     }
 
     public static MenuTo createTo(Restaurant rest, Collection<Dish> dishes) {
-        return new MenuTo(rest.getId(), rest.getName(), rest.getLocation(), dishes.stream().collect(Collectors.toMap(Dish::getName, Dish::getPrice)));
+        return new MenuTo(rest.getId(), rest.getName(), rest.getLocation(),dishes.stream()
+                .sorted(Comparator.comparingInt(Dish::getPrice))
+                .collect(Collectors.toMap(Dish::getName, Dish::getPrice, (a, b) -> a, LinkedHashMap::new)));
     }
 }

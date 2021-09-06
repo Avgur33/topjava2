@@ -73,4 +73,14 @@ public class AppConfig {
                         .expireAfterAccess(30, TimeUnit.MINUTES)
                         .build());
     }
+    @Bean
+    public CaffeineCache users(){
+        return new CaffeineCache("users",
+                Caffeine.newBuilder()
+                        .maximumSize(1)
+                        .expireAfterAccess(60, TimeUnit.SECONDS)
+                        .build());
+    }
+
+
 }
