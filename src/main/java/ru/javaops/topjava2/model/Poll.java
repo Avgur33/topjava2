@@ -16,7 +16,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "poll", uniqueConstraints = {@UniqueConstraint(
-        columnNames = {"name", "startDate", "endDate"}, name = "poll_unique_name_startDate_endDate_idx")})
+        columnNames = {"name", "start_date", "end_date"}, name = "poll_unique_name_startDate_endDate_idx")})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,12 +27,12 @@ public class Poll extends BaseEntity{
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "startDate", nullable = false,updatable = false)
+    @Column(name = "start_date", nullable = false,updatable = false)
     @NotNull
     private LocalDate startDate;
 
     @NotNull
-    @Column(name = "endDate", nullable = false)
+    @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
     @NotBlank
@@ -47,5 +47,12 @@ public class Poll extends BaseEntity{
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Hidden
     private List<Question> questions;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "poll",cascade = CascadeType.ALL)//, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonManagedReference(value = "poll_answer")
+    @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Hidden
+    private List<Answer> answers;
 
 }

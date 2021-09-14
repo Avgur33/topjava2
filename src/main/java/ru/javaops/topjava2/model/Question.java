@@ -29,7 +29,7 @@ public class Question extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @JoinColumn(name = "poll", nullable = false)
+    @JoinColumn(name = "poll_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -37,13 +37,5 @@ public class Question extends BaseEntity{
     @Hidden
     @ToString.Exclude
     private Poll poll;
-
-    @OneToMany(fetch = FetchType.LAZY)//, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @OrderBy("type DESC")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Hidden
-    @ToString.Exclude
-    //@JsonManagedReference(value = "question_answer")
-    private List<Answer> answers;
 
 }

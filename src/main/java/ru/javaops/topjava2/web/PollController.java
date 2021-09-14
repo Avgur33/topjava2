@@ -5,11 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import ru.javaops.topjava2.model.Answer;
 import ru.javaops.topjava2.model.Poll;
 import ru.javaops.topjava2.model.Question;
 import ru.javaops.topjava2.repository.PollRepository;
 import ru.javaops.topjava2.repository.QuestionRepository;
 
+import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -23,7 +26,7 @@ public class PollController {
     private PollRepository pollRepository;
 
     @Autowired
-    private QuestionRepository  questionRepository;
+    private QuestionRepository questionRepository;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -34,19 +37,19 @@ public class PollController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public List<Question> getQuestions(@PathVariable int id){
+    public List<Question> getQuestions(@PathVariable int id) {
         log.info("getQuestions");
-        return questionRepository.findAllByPollId(id);
+        //return questionRepository.findAllByPollId(id);
+        return pollRepository.getPollByIdWithQuestions(id).get().getQuestions();
     }
 
-/*    @PostMapping()
+    @PostMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public List<Question> getQuestions(@PathVariable int id){
+    @Transactional
+    public void setAnswers(@PathVariable int id, @RequestBody Answer... answers) {
         log.info("getQuestions");
-        return questionRepository.findAllByPollId(id);
-    }*/
-
-
-
+        Poll poll = pollRepository.findById(id).get();
+        poll.setAnswers((Arrays.stream(answers).peek(x -> x.setPoll(poll)).toList()));
+    }
 
 }
