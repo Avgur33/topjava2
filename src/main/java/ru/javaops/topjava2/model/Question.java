@@ -1,10 +1,9 @@
 package ru.javaops.topjava2.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.Hidden;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -18,27 +17,33 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+@ToString(callSuper = true)
+public class Question extends BaseEntity{
 
     @Column(name = "text", nullable = false)
     @NotBlank
     @Size(min = 5, max = 100)
     private String text;
 
-
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")//, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JoinColumn(name = "poll", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonBackReference(value = "poll_question")
+    @Hidden
+    @ToString.Exclude
+    private Poll poll;
+
+    @OneToMany(fetch = FetchType.LAZY)//, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("type DESC")
-    @JsonManagedReference(value = "question_answer")
-    @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Hidden
+    @ToString.Exclude
+    //@JsonManagedReference(value = "question_answer")
     private List<Answer> answers;
-
-
 
 }

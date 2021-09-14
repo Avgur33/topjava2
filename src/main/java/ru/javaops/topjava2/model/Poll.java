@@ -1,6 +1,8 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,22 +15,19 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "poll")
+@Table(name = "poll", uniqueConstraints = {@UniqueConstraint(
+        columnNames = {"name", "startDate", "endDate"}, name = "poll_unique_name_startDate_endDate_idx")})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Poll {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Poll extends BaseEntity{
 
     @NotBlank
     @Size(min = 2, max = 100)
     @Column(name = "name", nullable = false)
     private String name;
 
-
-    @Column(name = "startDate", nullable = false)
+    @Column(name = "startDate", nullable = false,updatable = false)
     @NotNull
     private LocalDate startDate;
 
@@ -45,6 +44,8 @@ public class Poll {
     @OrderBy("type DESC")
     @JsonManagedReference(value = "poll_question")
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Hidden
     private List<Question> questions;
 
 }
