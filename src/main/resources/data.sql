@@ -13,8 +13,8 @@ INSERT INTO question(text,type,poll_id)
 VALUES ('Poll1. What is your name?','TEXT',1),
        ('Poll2. What is your name?','TEXT',2);
 
-INSERT INTO answer(user_id, text, type, poll_id)
-VALUES (1,'answer 1 user 1','TEXT',1);
+INSERT INTO answer(user_id, text, type, poll_id, question_id)
+VALUES (1,'answer 1 user 1','TEXT',1, 1);
 
 
 
